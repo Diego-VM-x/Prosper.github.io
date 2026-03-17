@@ -1,0 +1,17 @@
+{
+  "name": "Prosper - Educación Financiera",
+  "short_name": "Prosper",
+  "description": "Tu camino hacia la libertad financiera. Aprende a invertir, ahorrar y gestionar tus gastos.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#FAFAFA",
+  "theme_color": "#1E3A8A",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
