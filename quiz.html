@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosper - Quiz</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAFAFA',
+                        mint: '#10B981',
+                        'mint-light': '#D1FAE5',
+                        'mint-hover': '#059669',
+                        navy: '#1E3A8A',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.3s ease-in-out' }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Aplicar el modo oscuro inmediatamente para evitar el flash blanco
+        (function() {
+            const savedMode = localStorage.getItem('darkMode');
+            const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedMode === 'true' || (savedMode === null && systemMode);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="text-gray-800 antialiased selection:bg-mint-light selection:text-navy bg-cream dark:bg-gray-900 dark:text-white transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const QUIZZES = [
+            { 
+                id: 1, 
+                q: "¿Qué es el 'Interés Compuesto' según el área de Aprende?", 
+                opts: ["Un impuesto por invertir", "Cuando tus ganancias generan sus propios intereses", "El valor de la moneda extranjera"], 
+                ans: 1, 
+                expl: "Es el efecto 'bola de nieve': los intereses ganados se reinvierten para generar más dinero de forma pasiva." 
+            },
+            { 
+                id: 2, 
+                q: "Para un 'Fondo de Emergencia', ¿cuánto dinero se recomienda tener?", 
+                opts: ["1 mes de sueldo", "3 a 6 meses de tus gastos fijos", "Lo suficiente para un viaje"], 
+                ans: 1, 
+                expl: "Este 'salvavidas' te protege de imprevistos como salud o desempleo sin recurrir a deudas." 
+            },
+            { 
+                id: 3, 
+                q: "En la regla 50/30/20, ¿a qué se destina el 30%?", 
+                opts: ["A deseos o gastos personales", "A la renta y comida", "Ahorro e inversión"], 
+                ans: 0, 
+                expl: "El 50% es para necesidades, el 30% para disfrutar (deseos) y el 20% para tu futuro financiero." 
+            },
+            { 
+                id: 4, 
+                q: "¿Qué es ser un usuario 'totalero' con las tarjetas?", 
+                opts: ["Usar todo el límite", "Pagar solo el pago mínimo", "Pagar el total cada mes antes de la fecha de corte"], 
+                ans: 2, 
+                expl: "Ser totalero permite usar el crédito del banco gratis, sin generar intereses y mejorando tu historial." 
+            },
+            { 
+                id: 5, 
+                q: "¿Por qué se dice que la inflación es el 'Ladrón Invisible'?", 
+                opts: ["Porque roba bancos", "Porque hace que tu dinero pierda poder adquisitivo cada año", "Porque es un cargo oculto"], 
+                ans: 1, 
+                expl: "Si dejas tu dinero estático, los precios suben y tus ahorros compran menos cosas con el tiempo." 
+            },
+            { 
+                id: 6, 
+                q: "¿Cuál es la principal ventaja de un ETF?", 
+                opts: ["Que siempre sube", "Permite diversificar en cientos de empresas con poco dinero", "Que no tiene riesgos"], 
+                ans: 1, 
+                expl: "Un ETF es un paquete de activos que reduce el riesgo al no apostar todo a una sola empresa." 
+            },
+            { 
+                id: 7, 
+                q: "¿Qué son los 'Gastos Hormiga'?", 
+                opts: ["Inversiones pequeñas", "Pequeños gastos diarios (café, chicles) que sumados son mucho dinero", "Gastos en el jardín"], 
+                ans: 1, 
+                expl: "Identificar y reducir estos micro-gastos inofensivos es clave para aumentar tu capacidad de ahorro." 
+            },
+            { 
+                id: 8, 
+                q: "¿Qué mide el Patrimonio Neto de una persona?", 
+                opts: ["Lo que gana en un mes", "Lo que posee (activos) menos lo que debe (pasivos)", "El saldo de su cuenta principal"], 
+                ans: 1, 
+                expl: "Es la medida definitiva de tu salud financiera real, más allá de cuánto ganes mensualmente." 
+            },
+            { 
+                id: 9, 
+                q: "¿Qué significa ROI?", 
+                opts: ["Riesgo Operativo Interno", "Rendimiento por Oficio Individual", "Retorno de Inversión"], 
+                ans: 2, 
+                expl: "Es la métrica que te indica cuánto ganaste o perdiste en relación a lo que invertiste originalmente." 
+            },
+            { 
+                id: 10, 
+                q: "¿Cuál es tu mejor primera inversión según la app?", 
+                opts: ["Comprar acciones de tecnología", "Tu educación financiera", "Comprar una casa"], 
+                ans: 1, 
+                expl: "Invertir en tu conocimiento te ahorra errores costosos y te ayuda a tomar mejores decisiones." 
+            }
+        ];
+
+        function QuizList() {
+            const [answers, setAnswers] = useState({});
+            const [scores, setScores] = useState({});
+
+            const handleAnswer = (qId, optIdx, correctIdx) => {
+                if (answers[qId] !== undefined) return;
+
+                setAnswers({ ...answers, [qId]: optIdx });
+                setScores({ ...scores, [qId]: optIdx === correctIdx });
+            };
+
+            return (
+                <div className="space-y-6">
+                    <div className="bg-navy dark:bg-gray-800 p-6 rounded-2xl flex items-center justify-between text-white shadow-xl relative overflow-hidden transition-colors duration-300">
+                        <i className="fas fa-brain absolute -right-4 -bottom-4 text-blue-900 dark:text-gray-900 opacity-50 text-7xl z-0"></i>
+                        <div className="z-10">
+                            <h2 className="text-2xl font-extrabold tracking-tight text-white">Quiz Financiero</h2>
+                            <p className="text-blue-200 dark:text-gray-300 font-medium mt-1 text-sm">Responde {QUIZZES.length} preguntas de educación</p>
+                        </div>
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center border-4 border-navy shadow-lg z-10 text-navy">
+                            <span className="font-black text-2xl">{Object.values(scores).filter(v => v).length}</span>
+                        </div>
+                    </div>
+
+                    {QUIZZES.map((quiz, i) => {
+                        const isAnswered = answers[quiz.id] !== undefined;
+                        const isCorrect = scores[quiz.id];
+
+                        let borderClass = "border-gray-100 dark:border-gray-700";
+                        if (isAnswered) borderClass = isCorrect ? "border-mint bg-mint-light/10 dark:bg-mint-light/5" : "border-red-400 bg-red-50/20 dark:bg-red-500/10";
+
+                        return (
+                            <div key={quiz.id} className={`bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border-2 animate-fade-in ${borderClass} card-hover transition-colors duration-300`}>
+                                <h3 className="font-bold text-navy dark:text-white text-lg mb-4 leading-tight">
+                                    <span className="text-mint mr-2">#{i + 1}</span>{quiz.q}
+                                </h3>
+                                <div className="space-y-3">
+                                    {quiz.opts.map((opt, optIdx) => {
+                                        let btnClass = "w-full text-left p-4 rounded-xl border-2 font-medium smooth-transition text-sm md:text-base leading-tight ";
+                                        if (isAnswered) {
+                                            if (optIdx === quiz.ans) {
+                                                btnClass += "bg-mint border-mint text-white shadow-md transform scale-[1.02] font-bold";
+                                            } else if (answers[quiz.id] === optIdx) {
+                                                btnClass += "bg-red-50 dark:bg-red-500/20 border-red-300 dark:border-red-500/50 text-red-800 dark:text-red-400";
+                                            } else {
+                                                btnClass += "bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 opacity-60";
+                                            }
+                                        } else {
+                                            btnClass += "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-mint dark:hover:border-mint hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300";
+                                        }
+
+                                        return (
+                                            <button
+                                                key={optIdx}
+                                                onClick={() => handleAnswer(quiz.id, optIdx, quiz.ans)}
+                                                disabled={isAnswered}
+                                                className={btnClass}
+                                            >
+                                                {opt}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+
+                                {isAnswered && (
+                                    <div className={`mt-4 p-4 rounded-xl ${isCorrect ? 'bg-mint-light/50 dark:bg-mint-light/10 border border-mint/20 dark:border-mint/10' : 'bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20'}`}>
+                                        <p className="text-sm font-medium leading-relaxed text-gray-700 dark:text-gray-300">
+                                            <span className={`font-bold ${isCorrect ? 'text-mint-hover dark:text-mint-light' : 'text-red-500 dark:text-red-400'} mr-2`}>
+                                                {isCorrect ? '¡Correcto!' : 'Explicación:'}
+                                            </span>
+                                            {quiz.expl}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })}
+                </div>
+            )
+        }
+
+        function RegisterModal({ isOpen, onClose, onRegister, darkMode }) {
+            if (!isOpen) return null;
+
+            const [formData, setFormData] = React.useState({
+                name: '',
+                email: '',
+                goal: ''
+            });
+            const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setIsSubmitting(true);
+
+                const formToSubmit = new FormData();
+                formToSubmit.append('name', formData.name);
+                formToSubmit.append('email', formData.email);
+                formToSubmit.append('meta_financiera', formData.goal);
+                formToSubmit.append('_captcha', 'false');
+                formToSubmit.append('_subject', 'Nuevo Registro Prosper');
+
+                try {
+                    await fetch('https://formspree.io/f/xlgpoajn', {
+                        method: 'POST',
+                        body: formToSubmit
+                    });
+                    localStorage.setItem('userName', formData.name);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    onRegister(formData.name);
+                    onClose();
+                } catch (error) {
+                    localStorage.setItem('userName', formData.name);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    onRegister(formData.name);
+                    onClose();
+                } finally {
+                    setIsSubmitting(false);
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm animate-fade-in">
+                    <div className={`w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-navy'}`}>
+                        <div className="relative p-6 md:p-8">
+                            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-mint transition-colors">
+                                <i className="fas fa-times text-xl"></i>
+                            </button>
+                            
+                            <div className="text-center mb-8">
+                                <div className="bg-mint/10 text-mint w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transform rotate-3">
+                                    <i className="fas fa-user-plus text-2xl"></i>
+                                </div>
+                                <h2 className="text-2xl font-black">Únete a Prosper.</h2>
+                                <p className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Comienza tu camino hacia la libertad financiera.</p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Nombre Completo</label>
+                                    <input 
+                                        required
+                                        type="text"
+                                        placeholder="Ej. Juan Pérez"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Correo Electrónico</label>
+                                    <input 
+                                        required
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Meta Financiera</label>
+                                    <textarea 
+                                        required
+                                        placeholder="Ej. Comprar mi primer depa, invertir en la bolsa..."
+                                        rows="2"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.goal}
+                                        onChange={(e) => setFormData({...formData, goal: e.target.value})}
+                                    ></textarea>
+                                </div>
+
+                                <button 
+                                    disabled={isSubmitting}
+                                    type="submit" 
+                                    className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] text-white font-bold py-4 rounded-2xl shadow-lg shadow-navy/20 transform hover:scale-[1.02] active:scale-95 transition-all mt-4 flex items-center justify-center"
+                                >
+                                    {isSubmitting ? (
+                                        <i className="fas fa-circle-notch fa-spin mr-2"></i>
+                                    ) : (
+                                        <i className="fas fa-paper-plane mr-2"></i>
+                                    )}
+                                    {isSubmitting ? 'Enviando...' : 'Empezar ahora'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const [showRegisterModal, setShowRegisterModal] = useState(false);
+            const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
+            const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+            const [darkMode, setDarkMode] = useState(() => {
+                const saved = localStorage.getItem('darkMode');
+                if (saved !== null) return saved === 'true';
+                return window.matchMedia('(prefers-color-scheme: dark)').matches;
+            });
+
+            React.useEffect(() => {
+                localStorage.setItem('isLoggedIn', isLoggedIn);
+            }, [isLoggedIn]);
+
+            React.useEffect(() => {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                const handleChange = (e) => {
+                    setDarkMode(e.matches);
+                };
+                mediaQuery.addEventListener('change', handleChange);
+                return () => mediaQuery.removeEventListener('change', handleChange);
+            }, []);
+
+            React.useEffect(() => {
+                localStorage.setItem('darkMode', darkMode);
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.add('bg-gray-900', 'text-white');
+                    document.body.classList.remove('bg-cream', 'text-gray-800');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.add('bg-cream', 'text-gray-800');
+                    document.body.classList.remove('bg-gray-900', 'text-white');
+                }
+            }, [darkMode]);
+
+            const handleRegister = (name) => {
+                setUserName(name);
+                setIsLoggedIn(true);
+            };
+
+            const toggleUserMenu = () => {
+                setMobileMenuOpen(!mobileMenuOpen);
+            };
+
+            return (
+                <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
+                    <header className={`backdrop-blur-md shadow-sm sticky top-0 z-50 border-b pb-safe-top transition-colors duration-300 ${darkMode ? 'bg-gray-900/90 border-gray-800 text-white' : 'bg-white/90 border-gray-100 text-gray-800'}`}>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between h-16 md:h-20 items-center">
+                                <div className="flex items-center cursor-pointer" onClick={() => window.location.href = 'index.html'}>
+                                    <div className="bg-mint text-white p-2 rounded-xl mr-3 shadow-md transform rotate-3">
+                                        <i className="fas fa-chart-line text-lg"></i>
+                                    </div>
+                                    <span className={`font-black text-2xl tracking-tight transition-colors ${darkMode ? 'text-white' : 'text-navy'}`}>Prosper<span className="text-mint">.</span></span>
+                                </div>
+
+                                <nav className="hidden md:flex space-x-8 items-center h-full">
+                                    <a href="index.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Inicio</a>
+                                    <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
+                                    <a href="tools.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Herramientas</a>
+                                    <a href="quiz.html" className={`h-full flex items-center border-b-4 font-bold px-1 py-1 border-mint text-mint`}>Quiz</a>
+                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mi Ruta</a>
+                                </nav>
+
+                                <div className="flex items-center">
+                                    <button onClick={toggleUserMenu} className={`p-2 rounded-xl smooth-transition focus:outline-none flex items-center w-10 h-10 justify-center ${darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-50 text-navy hover:bg-gray-100'}`}>
+                                        <i className={`fas ${mobileMenuOpen ? 'fa-times' : (isLoggedIn ? 'fa-user-check text-mint' : 'fa-user')} text-xl text-center flex items-center`}></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {mobileMenuOpen && (
+                            <div className={`absolute right-4 top-16 md:right-8 md:top-20 w-64 shadow-2xl z-50 animate-fade-in rounded-2xl overflow-hidden origin-top-right border ${darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-100 text-gray-800'}`}>
+                                <div className="p-3 space-y-1">
+                                    <div className={`px-3 py-3 border-b mb-2 ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                                        <p className="text-sm font-bold">{isLoggedIn ? userName : 'Invitado'}</p>
+                                        <p className="text-xs opacity-70">{isLoggedIn ? 'Usuario Verificado' : 'Sin iniciar sesión'}</p>
+                                    </div>
+
+                                    {!isLoggedIn && (
+                                        <button onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                            <i className="fas fa-sign-in-alt w-6"></i> Iniciar Sesión
+                                        </button>
+                                    )}
+
+                                    <a href="acerca.html" className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Acerca de
+                                    </a>
+                                    <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <div className="flex items-center">
+                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i> 
+                                            Tema {darkMode ? 'Claro' : 'Oscuro'}
+                                        </div>
+                                    </button>
+                                    {isLoggedIn && (
+                                        <button onClick={() => { localStorage.clear(); window.location.reload(); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-red-500 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                            <i className="fas fa-sign-out-alt w-6"></i> Cerrar Sesión
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </header>
+
+                    <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 w-full">
+                        <QuizList />
+                    </main>
+
+                    <RegisterModal 
+                        isOpen={showRegisterModal} 
+                        onClose={() => setShowRegisterModal(false)}
+                        onRegister={handleRegister}
+                        darkMode={darkMode}
+                    />
+
+                    {/* Bottom Nav para APK/Mobile */}
+                    <div className="md:hidden fixed bottom-0 left-0 w-full transition-colors duration-300 backdrop-blur-md border-t z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:bg-gray-900/95 dark:border-gray-800 bg-white/95 border-gray-200">
+                        <div className="flex justify-around items-end h-16 pb-2 relative">
+                            <a href="aprende.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-book-open text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Aprende</span>
+                            </a>
+                            <a href="quiz.html" className="flex flex-col items-center justify-center w-full text-mint dark:text-mint-light h-full border-t-2 border-mint dark:border-mint-light pt-1">
+                                <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-bold">Quiz</span>
+                            </a>
+                            
+                            <a href="index.html" className="flex flex-col items-center justify-center w-full relative z-10 bottom-3">
+                                <div className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 hover:text-mint dark:hover:text-mint-light w-14 h-14 rounded-full flex items-center justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-4 border-white dark:border-gray-900 transform hover:scale-105 smooth-transition">
+                                    <i className="fas fa-home text-2xl"></i>
+                                </div>
+                                <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-500 mt-1">Inicio</span>
+                            </a>
+
+                            <a href="tools.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-tools text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Útiles</span>
+                            </a>
+                            <a href="route.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-route text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Mi Ruta</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

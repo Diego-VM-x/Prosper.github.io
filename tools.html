@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramientas - Prosper</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAFAFA',
+                        mint: '#10B981',
+                        'mint-light': '#D1FAE5',
+                        'mint-hover': '#059669',
+                        navy: '#1E3A8A',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.3s ease-in-out' },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Aplicar el modo oscuro inmediatamente para evitar el flash blanco
+        (function() {
+            const savedMode = localStorage.getItem('darkMode');
+            const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedMode === 'true' || (savedMode === null && systemMode);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="text-gray-800 antialiased selection:bg-mint-light selection:text-navy bg-cream dark:bg-gray-900 dark:text-white transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function GastosHormiga() {
+            const [productName, setProductName] = useState('');
+            const [cost, setCost] = useState('');
+            const [frequency, setFrequency] = useState('1'); 
+            const [result, setResult] = useState(null);
+
+            const handleCalculate = () => {
+                const valCost = parseFloat(cost);
+                const valFreq = parseFloat(frequency);
+                if (!isNaN(valCost) && valCost > 0 && !isNaN(valFreq) && valFreq > 0) {
+                    const dailyCost = (valCost * valFreq) / 7;
+                    setResult({
+                        name: productName.trim() || 'este hábito',
+                        days15: dailyCost * 15,
+                        month: dailyCost * 30,
+                        year: dailyCost * 365
+                    });
+                } else setResult(null);
+            };
+
+            return (
+                <div className="animate-fade-in relative">
+                    <div className="flex justify-between items-start mb-5">
+                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Analiza cuánto podrías ahorrar si dejas de comprar ese "capricho" frecuente.</p>
+                        <a href="aprende.html?article=7" className="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender más sobre gastos hormiga">
+                            <i className="fas fa-info px-1"></i>
+                        </a>
+                    </div>
+                    <div className="space-y-4 mb-5">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Producto o Hábito</label>
+                            <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Ej. Café, Taxis..." className="w-full px-4 py-3 bg-gray-50 text-navy font-semibold rounded-xl focus:bg-white focus:border-mint focus:ring-4 focus:ring-mint-light outline-none border-2 border-transparent smooth-transition text-sm" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Costo ($)</label>
+                                <input type="number" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="0.00" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-mint focus:ring-4 focus:ring-mint-light outline-none border-2 border-transparent smooth-transition" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Por semana</label>
+                                <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="w-full px-4 py-3 bg-gray-50 text-navy font-bold text-sm rounded-xl focus:bg-white focus:border-mint focus:ring-4 focus:ring-mint-light outline-none border-2 border-transparent smooth-transition cursor-pointer">
+                                    <option value="1">1 vez</option>
+                                    <option value="2">2 veces</option>
+                                    <option value="3">3 veces</option>
+                                    <option value="5">5 veces</option>
+                                    <option value="7">A diario</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button onClick={handleCalculate} className="w-full bg-navy hover:bg-blue-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Calcular Ahorro</button>
+                    {result && (
+                        <div className="mt-5 p-5 bg-mint-light/40 rounded-xl border border-emerald-200 animate-fade-in">
+                            <h3 className="text-center text-emerald-800 font-bold text-sm mb-4">Si evitas <span className="text-navy bg-mint-light px-2 py-0.5 rounded font-black">"{result.name}"</span>, podrías ahorrar:</h3>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-emerald-100">
+                                    <span className="text-[11px] font-bold text-gray-600 uppercase">En 15 días</span>
+                                    <span className="font-extrabold text-navy">${result.days15.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-white p-3 rounded-lg border-l-4 border-l-emerald-400">
+                                    <span className="text-[11px] font-bold text-emerald-600 uppercase">En 1 mes</span>
+                                    <span className="font-black text-mint-hover text-lg">${result.month.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-mint p-4 rounded-xl shadow-md text-white mt-3">
+                                    <span className="text-xs font-bold uppercase">En 1 año</span>
+                                    <span className="font-black text-2xl">${result.year.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        function ROICalculator() {
+            const [initial, setInitial] = useState('');
+            const [final, setFinal] = useState('');
+            const [income, setIncome] = useState('');
+            const [expenses, setExpenses] = useState('');
+            const [result, setResult] = useState(null);
+
+            const calc = () => {
+                let i = parseFloat(initial) || 0; 
+                let f = parseFloat(final) || 0;
+                let inc = parseFloat(income) || 0;
+                let exp = parseFloat(expenses) || 0;
+                
+                const totalCost = i + exp;
+                if(totalCost > 0) {
+                    const totalReturn = f + inc;
+                    const netProfit = totalReturn - totalCost;
+                    const roi = (netProfit / totalCost) * 100;
+                    setResult({ roi: roi, profit: netProfit });
+                } else setResult(null);
+            };
+
+            return (
+                <div className="animate-fade-in relative">
+                    <div className="flex justify-between items-start mb-5">
+                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Calcula el retorno real con factores como remodelaciones, mantenimiento o ganancias por alquiler.</p>
+                        <a href="aprende.html?article=8" className="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre el Retorno de Inversión (ROI)">
+                            <i className="fas fa-info px-1"></i>
+                        </a>
+                    </div>
+                    <div className="space-y-4 mb-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Inversión Inicial ($)</label>
+                                <input type="number" value={initial} onChange={(e) => setInitial(e.target.value)} placeholder="Ej. 100000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-blue-500 outline-none border-2 border-transparent smooth-transition appearance-none" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Valor de Venta ($)</label>
+                                <input type="number" value={final} onChange={(e) => setFinal(e.target.value)} placeholder="Ej. 120000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-blue-500 outline-none border-2 border-transparent smooth-transition appearance-none" />
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                            <span className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-3 block"><i className="fas fa-plus-circle mr-1"></i> Factores Extras (Opcionales)</span>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Ingresos <span className="lowercase text-gray-500 font-normal">(alquiler, dividendos)</span></label>
+                                    <div className="relative">
+                                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">$</span>
+                                        <input type="number" value={income} onChange={(e) => setIncome(e.target.value)} placeholder="0.00" className="w-full pl-7 pr-4 py-3 bg-white text-navy font-bold rounded-xl focus:border-blue-500 outline-none border border-gray-200 smooth-transition" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Gastos <span className="lowercase text-gray-500 font-normal">(mantenimiento, seguros)</span></label>
+                                    <div className="relative">
+                                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">$</span>
+                                        <input type="number" value={expenses} onChange={(e) => setExpenses(e.target.value)} placeholder="0.00" className="w-full pl-7 pr-4 py-3 bg-white text-navy font-bold rounded-xl focus:border-blue-500 outline-none border border-gray-200 smooth-transition" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <button onClick={calc} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition"><i className="fas fa-calculator mr-2"></i> Calcular ROI Completo</button>
+                    {result && (
+                        <div className={`mt-5 p-5 rounded-xl border animate-fade-in ${result.profit >= 0 ? 'bg-mint-light/40 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+                            <div className="text-center">
+                                <span className="text-sm font-bold block mb-1">Tu Retorno de Inversión (ROI) es de:</span>
+                                <span className="text-4xl font-black">{result.roi.toFixed(2)}%</span>
+                                <div className={`mt-3 pt-3 border-t flex justify-center items-center space-x-2 ${result.profit >= 0 ? 'border-emerald-200/50' : 'border-red-200/50'}`}>
+                                    <span className="text-xs font-bold uppercase">{result.profit >= 0 ? 'Ganancia Neta:' : 'Pérdida Neta:'}</span>
+                                    <span className="text-lg font-black">${result.profit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        function MonthlyBudget() {
+            const [income, setIncome] = useState('');
+            const [result, setResult] = useState(null);
+
+            const calc = () => {
+                let inc = parseFloat(income);
+                if(inc > 0) setResult({ needs: inc*0.5, wants: inc*0.3, savings: inc*0.2 });
+                else setResult(null);
+            };
+
+            return (
+                <div className="animate-fade-in relative">
+                    <div className="flex justify-between items-start mb-5">
+                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Divide tu ingreso mensual usando la regla 50/30/20 (Necesidades/Deseos/Ahorro).</p>
+                        <a href="aprende.html?article=1" className="text-purple-500 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre la Regla 50/30/20">
+                            <i className="fas fa-info px-1"></i>
+                        </a>
+                    </div>
+                    <div className="mb-5">
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ingreso Mensual ($)</label>
+                        <input type="number" value={income} onChange={(e) => setIncome(e.target.value)} placeholder="Ej. 3000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-purple-500 outline-none border-2 border-transparent smooth-transition" />
+                    </div>
+                    <button onClick={calc} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Distribuir Dinero</button>
+                    {result && (
+                        <div className="mt-5 space-y-3 animate-fade-in">
+                            <div className="flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <div><span className="block font-extrabold text-blue-900">50% Necesidades</span><span className="text-[10px] text-blue-500 font-bold uppercase">Casa, comida, deudas</span></div>
+                                <span className="font-black text-blue-700 text-xl">${result.needs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className="flex justify-between items-center bg-pink-50 p-4 rounded-xl border border-pink-100">
+                                <div><span className="block font-extrabold text-pink-900">30% Deseos</span><span className="text-[10px] text-pink-500 font-bold uppercase">Cine, salidas, antojos</span></div>
+                                <span className="font-black text-pink-700 text-xl">${result.wants.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className="flex justify-between items-center bg-mint-light/50 p-4 rounded-xl border border-mint-light">
+                                <div><span className="block font-extrabold text-mint-hover">20% Ahorro</span><span className="text-[10px] text-mint uppercase font-bold">Inversión, Fondo</span></div>
+                                <span className="font-black text-mint-hover text-xl">${result.savings.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        function CompoundInterest() {
+            const [principal, setPrincipal] = useState('');
+            const [rate, setRate] = useState('');
+            const [years, setYears] = useState('');
+            const [result, setResult] = useState(null);
+
+            const calc = () => {
+                let p = parseFloat(principal); let r = parseFloat(rate)/100; let y = parseFloat(years);
+                if(p>0 && r>0 && y>0) setResult({ total: p * Math.pow(1 + r, y), profit: (p * Math.pow(1 + r, y)) - p });
+                else setResult(null);
+            };
+
+            return (
+                <div className="animate-fade-in relative">
+                    <div className="flex justify-between items-start mb-5">
+                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Mira cómo crece tu dinero a lo largo de los años gracias al interés compuesto.</p>
+                        <a href="aprende.html?article=4" className="text-emerald-500 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre el Interés Compuesto">
+                            <i className="fas fa-info px-1"></i>
+                        </a>
+                    </div>
+                    <div className="space-y-4 mb-5">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Capital Inicial ($)</label>
+                            <input type="number" value={principal} onChange={(e) => setPrincipal(e.target.value)} placeholder="Ej. 1000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-emerald-500 outline-none border-2 border-transparent smooth-transition" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tasa Anual (%)</label>
+                                <input type="number" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="Ej. 8" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-emerald-500 outline-none border-2 border-transparent smooth-transition" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Años</label>
+                                <input type="number" value={years} onChange={(e) => setYears(e.target.value)} placeholder="Ej. 5" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-emerald-500 outline-none border-2 border-transparent smooth-transition" />
+                            </div>
+                        </div>
+                    </div>
+                    <button onClick={calc} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Proyectar Crecimiento</button>
+                    {result && (
+                        <div className="mt-5 p-5 bg-navy text-white rounded-xl shadow-lg border border-blue-900 animate-fade-in text-center relative overflow-hidden">
+                            <i className="fas fa-chart-line absolute -bottom-5 -right-5 text-8xl opacity-10"></i>
+                            <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">Monto Final</span>
+                            <div className="font-black text-4xl text-mint my-2">${result.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            <span className="text-sm font-semibold text-gray-300 block">Ganancia Pura: <span className="text-mint-light">${result.profit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></span>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        function EmergencyFund() {
+            const [expenses, setExpenses] = useState('');
+            const [months, setMonths] = useState('3');
+            const [result, setResult] = useState(null);
+
+            const calc = () => {
+                let exp = parseFloat(expenses); let m = parseFloat(months);
+                if(exp > 0 && m > 0) setResult(exp * m);
+                else setResult(null);
+            };
+
+            return (
+                <div className="animate-fade-in relative">
+                    <div className="flex justify-between items-start mb-5">
+                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Calcula cuánto deberías ahorrar para estar protegido ante pérdidas de empleo o urgencias.</p>
+                        <a href="aprende.html?article=2" className="text-yellow-500 hover:text-yellow-700 bg-yellow-50 hover:bg-yellow-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre el Fondo de Emergencia">
+                            <i className="fas fa-info px-1"></i>
+                        </a>
+                    </div>
+                    <div className="space-y-4 mb-5">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tus Gastos Mensuales ($)</label>
+                            <input type="number" value={expenses} onChange={(e) => setExpenses(e.target.value)} placeholder="Ej. 800" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-yellow-500 outline-none border-2 border-transparent smooth-transition" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Meses que deseas cubrir</label>
+                            <select value={months} onChange={(e) => setMonths(e.target.value)} className="w-full px-4 py-3 bg-gray-50 text-navy font-bold text-sm rounded-xl focus:bg-white focus:border-yellow-500 outline-none border-2 border-transparent smooth-transition cursor-pointer">
+                                <option value="3">3 meses (Lo mínimo requerido)</option>
+                                <option value="6">6 meses (Para mayor paz mental)</option>
+                                <option value="12">12 meses (Máxima seguridad)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onClick={calc} className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Calcular mi Fondo</button>
+                    {result && (
+                        <div className="mt-5 p-5 bg-yellow-50 text-yellow-900 rounded-xl border border-yellow-200 animate-fade-in text-center flex items-center justify-between">
+                            <div className="text-left">
+                                <span className="text-xs uppercase font-extrabold text-yellow-600 tracking-wider">Tu Meta Ideal</span>
+                                <div className="font-black text-2xl">${result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            </div>
+                            <div className="bg-yellow-200 w-12 h-12 rounded-full flex items-center justify-center text-yellow-600 text-xl"><i className="fas fa-shield-alt"></i></div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        function NetWorth() {
+            const [assets, setAssets] = useState('');
+            const [liabilities, setLiabilities] = useState('');
+            const [result, setResult] = useState(null);
+
+            const calc = () => {
+                let a = parseFloat(assets) || 0; let l = parseFloat(liabilities) || 0;
+                setResult(a - l);
+            };
+
+            return (
+                <div className="animate-fade-in relative">
+                    <div className="flex justify-between items-start mb-5">
+                        <p className="text-gray-600 text-sm leading-relaxed pr-4">El Patrimonio Neto mide tu riqueza real (Lo que Tienes menos lo que Debes).</p>
+                        <a href="aprende.html?article=9" className="text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre Patrimonio Neto">
+                            <i className="fas fa-info px-1"></i>
+                        </a>
+                    </div>
+                    <div className="space-y-4 mb-5">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Valor de tus Activos (Ahorros, Inversiones, Autos) ($)</label>
+                            <input type="number" value={assets} onChange={(e) => setAssets(e.target.value)} placeholder="0.00" className="w-full px-4 py-3 bg-gray-50 text-emerald-700 font-bold rounded-xl focus:bg-white focus:border-indigo-500 outline-none border-2 border-transparent smooth-transition" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total de tus Deudas (Tarjetas, Préstamos) ($)</label>
+                            <input type="number" value={liabilities} onChange={(e) => setLiabilities(e.target.value)} placeholder="0.00" className="w-full px-4 py-3 bg-gray-50 text-red-600 font-bold rounded-xl focus:bg-white focus:border-indigo-500 outline-none border-2 border-transparent smooth-transition" />
+                        </div>
+                    </div>
+                    <button onClick={calc} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Calcular Riqueza Real</button>
+                    {result !== null && (
+                        <div className="mt-5 p-5 bg-gray-900 text-white rounded-xl shadow-lg border border-gray-800 animate-fade-in text-center">
+                            <span className="text-xs uppercase font-extrabold text-indigo-300 tracking-wider">Tu Patrimonio Neto es</span>
+                            <div className={`font-black text-4xl mt-1 ${result < 0 ? 'text-red-400' : 'text-emerald-400'}`}>${result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            {result < 0 && <span className="block text-xs text-red-300 mt-2">Tienes deudas mayores a tus activos. ¡Es momento de organizarte!</span>}
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        function ToolsDashboard() {
+            const tools = [
+                { id: 'hormiga', name: 'Gastos Hormiga', icon: 'fa-search-dollar', color: 'text-mint', titleBg: 'bg-mint-light/30 text-mint', bg: 'bg-mint-light', component: <GastosHormiga /> },
+                { id: 'budget', name: 'Presupuesto 50/30/20', icon: 'fa-chart-pie', color: 'text-purple-600', titleBg: 'bg-purple-100 text-purple-700', bg: 'bg-purple-100', component: <MonthlyBudget /> },
+                { id: 'roi', name: 'Retorno Inversión (ROI)', icon: 'fa-chart-line', color: 'text-blue-600', titleBg: 'bg-blue-100 text-blue-700', bg: 'bg-blue-100', component: <ROICalculator /> },
+                { id: 'compound', name: 'Interés Compuesto', icon: 'fa-seedling', color: 'text-emerald-600', titleBg: 'bg-emerald-100 text-emerald-700', bg: 'bg-emerald-100', component: <CompoundInterest /> },
+                { id: 'emergency', name: 'Fondo Emergencia', icon: 'fa-piggy-bank', color: 'text-yellow-600', titleBg: 'bg-yellow-100 text-yellow-700', bg: 'bg-yellow-100', component: <EmergencyFund /> },
+                { id: 'networth', name: 'Patrimonio Neto', icon: 'fa-scale-balanced', color: 'text-indigo-600', titleBg: 'bg-indigo-100 text-indigo-700', bg: 'bg-indigo-100', component: <NetWorth /> },
+            ];
+            
+            const [activeToolId, setActiveToolId] = useState('hormiga');
+            const activeTool = tools.find(t => t.id === activeToolId);
+
+            React.useEffect(() => {
+                const params = new URLSearchParams(window.location.search);
+                const toolParam = params.get('tool');
+                if (toolParam && tools.some(t => t.id === toolParam)) {
+                    setActiveToolId(toolParam);
+                }
+            }, []);
+
+            return (
+                <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-6">
+                    {/* Panel de Selección */}
+                    <div className="w-full md:w-1/3 flex flex-row md:flex-col overflow-x-auto md:overflow-visible gap-3 md:gap-2 pb-2 md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        {tools.map(tool => (
+                            <button
+                                key={tool.id}
+                                onClick={() => setActiveToolId(tool.id)}
+                                className={`snap-start shrink-0 flex items-center p-3 md:p-4 rounded-2xl smooth-transition border text-left cursor-pointer w-[200px] md:w-full focus:outline-none transition-colors ${activeToolId === tool.id ? `bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-md transform md:scale-105` : `bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700 opacity-60 hover:opacity-100`}`}
+                            >
+                                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${tool.bg} flex items-center justify-center shrink-0`}>
+                                    <i className={`fas ${tool.icon} ${tool.color} text-lg md:text-xl`}></i>
+                                </div>
+                                <span className={`ml-3 font-extrabold text-sm leading-tight transition-colors ${activeToolId === tool.id ? 'text-navy dark:text-white' : 'text-gray-600 dark:text-gray-500'}`}>{tool.name}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Contenedor de la Herramienta */}
+                    <div className="w-full md:w-2/3 bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative min-h-[400px] transition-colors duration-300">
+                        {activeTool && (
+                            <div className="animate-fade-in">
+                                <div className="flex items-center mb-6">
+                                    <div className={`${activeTool.titleBg} px-3 py-1.5 rounded-lg flex items-center shadow-sm`}>
+                                        <i className={`fas ${activeTool.icon} mr-2`}></i>
+                                        <h2 className="text-sm font-extrabold tracking-tight">{activeTool.name}</h2>
+                                    </div>
+                                </div>
+                                {activeTool.component}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        function RegisterModal({ isOpen, onClose, onRegister, darkMode }) {
+            if (!isOpen) return null;
+
+            const [formData, setFormData] = React.useState({
+                name: '',
+                email: '',
+                goal: ''
+            });
+            const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setIsSubmitting(true);
+
+                const formToSubmit = new FormData();
+                formToSubmit.append('name', formData.name);
+                formToSubmit.append('email', formData.email);
+                formToSubmit.append('meta_financiera', formData.goal);
+                formToSubmit.append('_captcha', 'false');
+                formToSubmit.append('_subject', 'Nuevo Registro Prosper');
+
+                try {
+                    await fetch('https://formspree.io/f/xlgpoajn', {
+                        method: 'POST',
+                        body: formToSubmit
+                    });
+                    localStorage.setItem('userName', formData.name);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    onRegister(formData.name);
+                    onClose();
+                } catch (error) {
+                    localStorage.setItem('userName', formData.name);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    onRegister(formData.name);
+                    onClose();
+                } finally {
+                    setIsSubmitting(false);
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm animate-fade-in">
+                    <div className={`w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-navy'}`}>
+                        <div className="relative p-6 md:p-8">
+                            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-mint transition-colors">
+                                <i className="fas fa-times text-xl"></i>
+                            </button>
+                            
+                            <div className="text-center mb-8">
+                                <div className="bg-mint/10 text-mint w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transform rotate-3">
+                                    <i className="fas fa-user-plus text-2xl"></i>
+                                </div>
+                                <h2 className="text-2xl font-black">Únete a Prosper.</h2>
+                                <p className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Comienza tu camino hacia la libertad financiera.</p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Nombre Completo</label>
+                                    <input 
+                                        required
+                                        type="text"
+                                        placeholder="Ej. Juan Pérez"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Correo Electrónico</label>
+                                    <input 
+                                        required
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Meta Financiera</label>
+                                    <textarea 
+                                        required
+                                        placeholder="Ej. Comprar mi primer depa, invertir en la bolsa..."
+                                        rows="2"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.goal}
+                                        onChange={(e) => setFormData({...formData, goal: e.target.value})}
+                                    ></textarea>
+                                </div>
+
+                                <button 
+                                    disabled={isSubmitting}
+                                    type="submit" 
+                                    className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] text-white font-bold py-4 rounded-2xl shadow-lg shadow-navy/20 transform hover:scale-[1.02] active:scale-95 transition-all mt-4 flex items-center justify-center"
+                                >
+                                    {isSubmitting ? (
+                                        <i className="fas fa-circle-notch fa-spin mr-2"></i>
+                                    ) : (
+                                        <i className="fas fa-paper-plane mr-2"></i>
+                                    )}
+                                    {isSubmitting ? 'Enviando...' : 'Empezar ahora'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const [showRegisterModal, setShowRegisterModal] = useState(false);
+            const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
+            const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+            const [darkMode, setDarkMode] = useState(() => {
+                const saved = localStorage.getItem('darkMode');
+                if (saved !== null) return saved === 'true';
+                return window.matchMedia('(prefers-color-scheme: dark)').matches;
+            });
+
+            React.useEffect(() => {
+                localStorage.setItem('isLoggedIn', isLoggedIn);
+            }, [isLoggedIn]);
+
+            React.useEffect(() => {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                const handleChange = (e) => {
+                    setDarkMode(e.matches);
+                };
+                mediaQuery.addEventListener('change', handleChange);
+                return () => mediaQuery.removeEventListener('change', handleChange);
+            }, []);
+
+            React.useEffect(() => {
+                localStorage.setItem('darkMode', darkMode);
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.add('bg-gray-900', 'text-white');
+                    document.body.classList.remove('bg-cream', 'text-gray-800');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.add('bg-cream', 'text-gray-800');
+                    document.body.classList.remove('bg-gray-900', 'text-white');
+                }
+            }, [darkMode]);
+
+            const handleRegister = (name) => {
+                setUserName(name);
+                setIsLoggedIn(true);
+            };
+
+            const toggleUserMenu = () => {
+                setMobileMenuOpen(!mobileMenuOpen);
+            };
+
+            return (
+                <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
+                    <header className={`backdrop-blur-md shadow-sm sticky top-0 z-50 border-b pb-safe-top transition-colors duration-300 ${darkMode ? 'bg-gray-900/90 border-gray-800 text-white' : 'bg-white/90 border-gray-100 text-gray-800'}`}>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between h-16 md:h-20 items-center">
+                                <div className="flex items-center cursor-pointer" onClick={() => window.location.href = 'index.html'}>
+                                    <div className="bg-mint text-white p-2 rounded-xl mr-3 shadow-md transform rotate-3">
+                                        <i className="fas fa-chart-line text-lg"></i>
+                                    </div>
+                                    <span className={`font-black text-2xl tracking-tight transition-colors ${darkMode ? 'text-white' : 'text-navy'}`}>Prosper<span className="text-mint">.</span></span>
+                                </div>
+
+                                <nav className="hidden md:flex space-x-8 items-center h-full">
+                                    <a href="index.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Inicio</a>
+                                    <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
+                                    <a href="tools.html" className="h-full flex items-center text-mint border-b-4 border-mint font-bold px-1 py-1">Herramientas</a>
+                                    <a href="quiz.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Quiz</a>
+                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mi Ruta</a>
+                                </nav>
+
+                                <div className="flex items-center">
+                                    <button onClick={toggleUserMenu} className={`p-2 rounded-xl smooth-transition focus:outline-none flex items-center w-10 h-10 justify-center ${darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-50 text-navy hover:bg-gray-100'}`}>
+                                        <i className={`fas ${mobileMenuOpen ? 'fa-times' : (isLoggedIn ? 'fa-user-check text-mint' : 'fa-user')} text-xl text-center flex items-center`}></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {mobileMenuOpen && (
+                            <div className={`absolute right-4 top-16 md:right-8 md:top-20 w-64 shadow-2xl z-50 animate-fade-in rounded-2xl overflow-hidden origin-top-right border ${darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-100 text-gray-800'}`}>
+                                <div className="p-3 space-y-1">
+                                    <div className={`px-3 py-3 border-b mb-2 ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                                        <p className="text-sm font-bold">{isLoggedIn ? userName : 'Invitado'}</p>
+                                        <p className="text-xs opacity-70">{isLoggedIn ? 'Usuario Verificado' : 'Sin iniciar sesión'}</p>
+                                    </div>
+
+                                    {!isLoggedIn && (
+                                        <button onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                            <i className="fas fa-sign-in-alt w-6"></i> Iniciar Sesión
+                                        </button>
+                                    )}
+
+                                    <a href="acerca.html" onClick={() => setMobileMenuOpen(false)} className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Acerca de
+                                    </a>
+                                    <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <div className="flex items-center">
+                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i> 
+                                            Tema {darkMode ? 'Claro' : 'Oscuro'}
+                                        </div>
+                                    </button>
+                                    {isLoggedIn && (
+                                        <button onClick={() => { localStorage.clear(); window.location.reload(); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-red-500 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                            <i className="fas fa-sign-out-alt w-6"></i> Cerrar Sesión
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </header>
+
+                    <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 w-full">
+                        <ToolsDashboard />
+                    </main>
+
+                    <RegisterModal 
+                        isOpen={showRegisterModal} 
+                        onClose={() => setShowRegisterModal(false)}
+                        onRegister={handleRegister}
+                        darkMode={darkMode}
+                    />
+
+                    {/* Bottom Nav para APK/Mobile */}
+                    <div className="md:hidden fixed bottom-0 left-0 w-full transition-colors duration-300 backdrop-blur-md border-t z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:bg-gray-900/95 dark:border-gray-800 bg-white/95 border-gray-200">
+                        <div className="flex justify-around items-end h-16 pb-2 relative">
+                            <a href="aprende.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-book-open text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Aprende</span>
+                            </a>
+                            <a href="quiz.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Quiz</span>
+                            </a>
+                            
+                            <a href="index.html" className="flex flex-col items-center justify-center w-full relative z-10 bottom-3">
+                                <div className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 hover:text-mint dark:hover:text-mint-light w-14 h-14 rounded-full flex items-center justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-4 border-white dark:border-gray-900 transform hover:scale-105 smooth-transition">
+                                    <i className="fas fa-home text-2xl"></i>
+                                </div>
+                                <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-500 mt-1">Inicio</span>
+                            </a>
+
+                            <a href="tools.html" className="flex flex-col items-center justify-center w-full text-mint dark:text-mint-light h-full border-t-2 border-mint dark:border-mint-light pt-1">
+                                <i className="fas fa-tools text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-bold">Útiles</span>
+                            </a>
+                            <a href="route.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-route text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Mi Ruta</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

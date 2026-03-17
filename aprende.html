@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosper - Educación Financiera</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAFAFA',
+                        mint: '#10B981', // emerald-500
+                        'mint-light': '#D1FAE5',
+                        'mint-hover': '#059669',
+                        navy: '#1E3A8A', // blue-900
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.3s ease-in-out' },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Aplicar el modo oscuro inmediatamente para evitar el flash blanco
+        (function() {
+            const savedMode = localStorage.getItem('darkMode');
+            const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedMode === 'true' || (savedMode === null && systemMode);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="text-gray-800 antialiased selection:bg-mint-light selection:text-navy bg-cream dark:bg-gray-900 dark:text-white transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const ARTICLES = [
+            {
+                id: 1,
+                title: "Regla del 50/30/20: Presupuesto Automático",
+                summary: "Descubre cómo dividir tus ingresos para cubrir necesidades, disfrutar y ahorrar.",
+                fullText: "La regla consiste en destinar el 50% de tus ingresos a necesidades primarias (renta, comida), el 30% a deseos o gastos personales (salidas) y el 20% al ahorro o inversiones. Automatizar estas transferencias al recibir tu sueldo es clave.",
+                tag: "Ahorro",
+                icon: "fa-chart-pie"
+            },
+            {
+                id: 2,
+                title: "Fondo de Emergencia: Tu salvavidas",
+                summary: "Por qué necesitas ahorros para imprevistos y cómo empezar a construirlos.",
+                fullText: "Un fondo de emergencia es un colchón de dinero (3 a 6 meses de tus gastos fijos) que te protege frente a eventos inesperados (desempleo, salud). Guárdalo en una cuenta líquida pero separada de tus gastos diarios.",
+                tag: "Ahorro",
+                icon: "fa-piggy-bank"
+            },
+            {
+                id: 3,
+                title: "Trampas de las Tarjetas de Crédito",
+                summary: "Evita caer en el temido pago mínimo y los altos intereses compuestos.",
+                fullText: "El mayor error es hacer solo el 'pago mínimo', ya que tu deuda crecerá inmensamente por los intereses. Sé un usuario 'totalero': paga el total cada mes antes de la fecha de corte para no generar intereses y mejorar tu historial.",
+                tag: "Gastos",
+                icon: "fa-credit-card"
+            },
+            {
+                id: 4,
+                title: "La Magia del Interés Compuesto",
+                summary: "Cómo hacer que tu dinero trabaje para ti y genere más ganancias con el tiempo.",
+                fullText: "El interés compuesto ocurre cuando los intereses que ganas por tu inversión comienzan a generar sus propios intereses. A largo plazo, esta 'bola de nieve' es el principal secreto para multiplicar tu riqueza de forma pasiva.",
+                tag: "Inversión",
+                icon: "fa-chart-line"
+            },
+            {
+                id: 5,
+                title: "Inflación: El Ladrón Invisible",
+                summary: "Entiende por qué guardar dinero bajo el colchón te hace más pobre cada año.",
+                fullText: "La inflación es el aumento generalizado de los precios. Si dejas tu dinero estático, pierde poder adquisitivo. Para proteger tus ahorros, debes invertirlos en instrumentos que te den un rendimiento mayor al porcentaje de inflación anual.",
+                tag: "Mentalidad",
+                icon: "fa-money-bill-wave"
+            },
+            {
+                id: 6,
+                title: "Diversificación: No pongas todos los huevos en una cesta",
+                summary: "Aprende a proteger tu dinero distribuyendo el riesgo en diferentes activos.",
+                fullText: "Diversificar significa invertir en diferentes instrumentos (acciones, bonos, bienes raíces) o incluso tener múltiples fuentes de ingresos. Así, si a un sector de la economía le va mal, los otros pueden compensar las pérdidas.",
+                tag: "Inversión",
+                icon: "fa-layer-group"
+            },
+            {
+                id: 11,
+                title: "Inversión Temprana: El Tiempo es Oro",
+                summary: "Por qué empezar a los 20 es mucho mejor que empezar a los 40.",
+                fullText: "Cuando eres joven, el tiempo es tu mayor activo. Gracias al interés compuesto, pequeñas cantidades invertidas hoy crecen exponencialmente. Empezar joven te permite asumir riesgos controlados y recuperarte de fluctuaciones del mercado, algo que a edades avanzadas es más difícil.",
+                tag: "Inversión",
+                icon: "fa-seedling"
+            },
+            {
+                id: 12,
+                title: "ETFs: La Puerta de Entrada Perfecta",
+                summary: "Invierte en cientos de empresas con un solo clic y poco dinero.",
+                fullText: "Los fondos cotizados (ETFs) permiten a los jóvenes inversores diversificar su dinero desde el primer euro. En lugar de apostar todo a una sola empresa, compras un paquete que sigue índices como el S&P 500, reduciendo el riesgo y simplificando tu estrategia.",
+                tag: "Inversión",
+                icon: "fa-layer-group"
+            },
+            {
+                id: 13,
+                title: "Ahorro vs Inversión: La Gran Diferencia",
+                summary: "Entiende cuándo dejar el dinero quieto y cuándo ponerlo a trabajar.",
+                fullText: "El ahorro es para metas a corto plazo o emergencias. La inversión busca batir a la inflación y generar riqueza a largo plazo. Para un joven, mantener todo su capital en una cuenta de ahorros tradicional es perder dinero lentamente frente a la subida de precios.",
+                tag: "Mentalidad",
+                icon: "fa-right-left"
+            },
+            {
+                id: 14,
+                title: "Educación: Tu Primera Gran Inversión",
+                summary: "Antes de comprar acciones, invierte en tu conocimiento financiero.",
+                fullText: "No inviertas en lo que no entiendes. Leer libros, seguir cursos y usar herramientas como Prosper te ahorra miles de euros en errores de novato. Tu capacidad de generar ingresos es tu mejor motor financiero al empezar.",
+                tag: "Mentalidad",
+                icon: "fa-user-graduate"
+            },
+            {
+                id: 7,
+                title: "El Peligro de los Gastos Hormiga",
+                summary: "Pequeños gastos diarios que, al sumarse, destruyen tu capacidad de ahorro.",
+                fullText: "Un gasto hormiga es aquel desembolso pequeño o cotidiano (el café de la mañana, dulces, suscripciones olvidadas o taxis frecuentes) que parece inofensivo pero que al final del mes suma una cantidad enorme de dinero. Identificarlos es el primer paso para dominar tu dinero.",
+                tag: "Gastos",
+                icon: "fa-search-dollar"
+            },
+            {
+                id: 8,
+                title: "Entendiendo el Retorno de Inversión (ROI)",
+                summary: "Aprende a calcular si una inversión te está dando verdaderas ganancias.",
+                fullText: "El ROI (Return on Investment) es una métrica financiera usada para medir el margen de beneficio de una inversión respecto a su costo inicial. Te dice exactamente qué porcentaje ganaste o perdiste contando también los gastos ocultos (como impuestos o mantenimientos).",
+                tag: "Inversión",
+                icon: "fa-percent"
+            },
+            {
+                id: 9,
+                title: "Conoce tu Patrimonio Neto",
+                summary: "La medida definitiva de tu verdadera salud y riqueza financiera.",
+                fullText: "Mucha gente mide su éxito por su salario mensual, pero el verdadero indicador es el Patrimonio Neto: lo que realmente posees (ahorros e inversiones) menos lo que debes (tarjetas y préstamos). Para lograr libertad financiera, tu Patrimonio Neto debe crecer de manera constante con los años.",
+                tag: "Inversión",
+                icon: "fa-scale-balanced"
+            }
+        ];
+
+        function ArticleFeed() {
+            const [expandedId, setExpandedId] = useState(null);
+            const [filter, setFilter] = useState("Todas");
+            const categories = ["Todas", "Ahorro", "Inversión", "Gastos", "Mentalidad"];
+
+            // Leer parámetro de la URL (ej. ?article=3)
+            React.useEffect(() => {
+                const params = new URLSearchParams(window.location.search);
+                const articleParam = params.get('article');
+                if (articleParam) {
+                    const id = parseInt(articleParam);
+                    setExpandedId(id);
+                    // Opcional: hacer un pequeño scroll hacia el artículo
+                    setTimeout(() => {
+                        const el = document.getElementById(`article-${id}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                }
+            }, []);
+
+            const filteredArticles = filter === "Todas" 
+                ? ARTICLES 
+                : ARTICLES.filter(a => a.tag === filter);
+
+            return (
+                <div className="space-y-6 md:space-y-8">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <h2 className="text-2xl font-extrabold text-navy dark:text-white flex items-center">
+                            <i className="fas fa-book-open text-mint mr-3"></i> Lecturas sugeridas para ti
+                        </h2>
+                        
+                        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                            {categories.map(cat => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setFilter(cat)}
+                                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${filter === cat ? 'bg-mint text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-700 hover:border-mint/50'}`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-6">
+                        {filteredArticles.length > 0 ? filteredArticles.map(article => (
+                            <div key={article.id} id={`article-${article.id}`} className={`group bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700 smooth-transition hover:shadow-xl hover:border-mint/20 relative overflow-hidden ${expandedId === article.id ? 'ring-2 ring-mint/30' : ''}`}>
+                                <div className="absolute top-0 left-0 w-1 h-full bg-mint opacity-0 group-hover:opacity-100 smooth-transition"></div>
+
+                                <div className="flex items-start justify-between mb-3">
+                                    <span className="bg-mint-light text-mint-hover text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                                        <i className={`fas ${article.icon} mr-1`}></i> {article.tag}
+                                    </span>
+                                </div>
+                                <h3 className="text-xl md:text-2xl font-bold text-navy dark:text-white mb-3 leading-tight">{article.title}</h3>
+
+                                <div className="text-gray-600 dark:text-gray-400 mb-5 text-sm md:text-base leading-relaxed">
+                                    {expandedId === article.id ? (
+                                        <span className="animate-fade-in block bg-gray-50/50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100/50 dark:border-gray-600/50 mt-2 text-gray-700 dark:text-gray-300">{article.fullText}</span>
+                                    ) : (
+                                        <span>{article.summary}</span>
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={() => setExpandedId(expandedId === article.id ? null : article.id)}
+                                    className="inline-flex items-center justify-center bg-gray-50 dark:bg-gray-700 hover:bg-mint-light dark:hover:bg-mint/20 text-navy dark:text-white hover:text-mint-hover dark:hover:text-mint font-semibold px-4 py-2 rounded-lg smooth-transition"
+                                >
+                                    {expandedId === article.id ? "Mostrar menos" : "Leer más"}
+                                    <i className={`fas fa-chevron-${expandedId === article.id ? 'up' : 'down'} ml-2 text-xs`}></i>
+                                </button>
+                            </div>
+                        )) : (
+                            <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border-2 border-dashed border-gray-100 dark:border-gray-700">
+                                <i className="fas fa-search text-gray-300 text-4xl mb-4"></i>
+                                <p className="text-gray-400 font-medium">No hay lecturas en esta categoría.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        function RegisterModal({ isOpen, onClose, onRegister, darkMode }) {
+            if (!isOpen) return null;
+
+            const [formData, setFormData] = React.useState({
+                name: '',
+                email: '',
+                goal: ''
+            });
+            const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setIsSubmitting(true);
+
+                const formToSubmit = new FormData();
+                formToSubmit.append('name', formData.name);
+                formToSubmit.append('email', formData.email);
+                formToSubmit.append('meta_financiera', formData.goal);
+                formToSubmit.append('_captcha', 'false');
+                formToSubmit.append('_subject', 'Nuevo Registro Prosper');
+
+                try {
+                    await fetch('https://formspree.io/f/xlgpoajn', {
+                        method: 'POST',
+                        body: formToSubmit
+                    });
+                    localStorage.setItem('userName', formData.name);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    onRegister(formData.name);
+                    onClose();
+                } catch (error) {
+                    localStorage.setItem('userName', formData.name);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    onRegister(formData.name);
+                    onClose();
+                } finally {
+                    setIsSubmitting(false);
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm animate-fade-in">
+                    <div className={`w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-navy'}`}>
+                        <div className="relative p-6 md:p-8">
+                            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-mint transition-colors">
+                                <i className="fas fa-times text-xl"></i>
+                            </button>
+                            
+                            <div className="text-center mb-8">
+                                <div className="bg-mint/10 text-mint w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transform rotate-3">
+                                    <i className="fas fa-user-plus text-2xl"></i>
+                                </div>
+                                <h2 className="text-2xl font-black">Únete a Prosper.</h2>
+                                <p className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Comienza tu camino hacia la libertad financiera.</p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Nombre Completo</label>
+                                    <input 
+                                        required
+                                        type="text"
+                                        placeholder="Ej. Juan Pérez"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Correo Electrónico</label>
+                                    <input 
+                                        required
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Meta Financiera</label>
+                                    <textarea 
+                                        required
+                                        placeholder="Ej. Comprar mi primer depa, invertir en la bolsa..."
+                                        rows="2"
+                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
+                                        value={formData.goal}
+                                        onChange={(e) => setFormData({...formData, goal: e.target.value})}
+                                    ></textarea>
+                                </div>
+
+                                <button 
+                                    disabled={isSubmitting}
+                                    type="submit" 
+                                    className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] text-white font-bold py-4 rounded-2xl shadow-lg shadow-navy/20 transform hover:scale-[1.02] active:scale-95 transition-all mt-4 flex items-center justify-center"
+                                >
+                                    {isSubmitting ? (
+                                        <i className="fas fa-circle-notch fa-spin mr-2"></i>
+                                    ) : (
+                                        <i className="fas fa-paper-plane mr-2"></i>
+                                    )}
+                                    {isSubmitting ? 'Enviando...' : 'Empezar ahora'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const [showRegisterModal, setShowRegisterModal] = useState(false);
+            const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
+            const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+            const [darkMode, setDarkMode] = useState(() => {
+                const saved = localStorage.getItem('darkMode');
+                if (saved !== null) return saved === 'true';
+                return window.matchMedia('(prefers-color-scheme: dark)').matches;
+            });
+
+            React.useEffect(() => {
+                localStorage.setItem('isLoggedIn', isLoggedIn);
+            }, [isLoggedIn]);
+
+            React.useEffect(() => {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                const handleChange = (e) => {
+                    setDarkMode(e.matches);
+                };
+                mediaQuery.addEventListener('change', handleChange);
+                return () => mediaQuery.removeEventListener('change', handleChange);
+            }, []);
+
+            React.useEffect(() => {
+                localStorage.setItem('darkMode', darkMode);
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.add('bg-gray-900', 'text-white');
+                    document.body.classList.remove('bg-cream', 'text-gray-800');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.add('bg-cream', 'text-gray-800');
+                    document.body.classList.remove('bg-gray-900', 'text-white');
+                }
+            }, [darkMode]);
+
+            const handleRegister = (name) => {
+                setUserName(name);
+                setIsLoggedIn(true);
+            };
+
+            const toggleUserMenu = () => {
+                setMobileMenuOpen(!mobileMenuOpen);
+            };
+
+            return (
+                <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
+                    <header className={`backdrop-blur-md shadow-sm sticky top-0 z-50 border-b pb-safe-top transition-colors duration-300 ${darkMode ? 'bg-gray-900/90 border-gray-800 text-white' : 'bg-white/90 border-gray-100 text-gray-800'}`}>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between h-16 md:h-20 items-center">
+                                <div className="flex items-center cursor-pointer" onClick={() => window.location.href = 'index.html'}>
+                                    <div className="bg-mint text-white p-2 rounded-xl mr-3 shadow-md transform rotate-3">
+                                        <i className="fas fa-chart-line text-lg"></i>
+                                    </div>
+                                    <span className={`font-black text-2xl tracking-tight transition-colors ${darkMode ? 'text-white' : 'text-navy'}`}>Prosper<span className="text-mint">.</span></span>
+                                </div>
+
+                                <nav className="hidden md:flex space-x-8 items-center h-full">
+                                    <a href="index.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Inicio</a>
+                                    <a href="aprende.html" className="h-full flex items-center text-mint border-b-4 border-mint font-bold px-1 py-1">Aprende</a>
+                                    <a href="tools.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Herramientas</a>
+                                    <a href="quiz.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Quiz</a>
+                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mi Ruta</a>
+                                </nav>
+
+                                <div className="flex items-center">
+                                    <button onClick={toggleUserMenu} className={`p-2 rounded-xl smooth-transition focus:outline-none flex items-center w-10 h-10 justify-center ${darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-50 text-navy hover:bg-gray-100'}`}>
+                                        <i className={`fas ${mobileMenuOpen ? 'fa-times' : (isLoggedIn ? 'fa-user-check text-mint' : 'fa-user')} text-xl text-center flex items-center`}></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {mobileMenuOpen && (
+                            <div className={`absolute right-4 top-16 md:right-8 md:top-20 w-64 shadow-2xl z-50 animate-fade-in rounded-2xl overflow-hidden origin-top-right border ${darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-100 text-gray-800'}`}>
+                                <div className="p-3 space-y-1">
+                                    <div className={`px-3 py-3 border-b mb-2 ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                                        <p className="text-sm font-bold">{isLoggedIn ? userName : 'Invitado'}</p>
+                                        <p className="text-xs opacity-70">{isLoggedIn ? 'Usuario Verificado' : 'Sin iniciar sesión'}</p>
+                                    </div>
+
+                                    {!isLoggedIn && (
+                                        <button onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                            <i className="fas fa-sign-in-alt w-6"></i> Iniciar Sesión
+                                        </button>
+                                    )}
+
+                                    <a href="acerca.html" className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Acerca de
+                                    </a>
+                                    <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <div className="flex items-center">
+                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i> 
+                                            Tema {darkMode ? 'Claro' : 'Oscuro'}
+                                        </div>
+                                    </button>
+                                    {isLoggedIn && (
+                                        <button onClick={() => { localStorage.clear(); window.location.reload(); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-red-500 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                            <i className="fas fa-sign-out-alt w-6"></i> Cerrar Sesión
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </header>
+
+                    <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 w-full">
+                        <div className="mb-8 md:mb-12">
+                            <span className="text-mint font-bold uppercase tracking-widest text-xs mb-2 block">Crecimiento Financiero</span>
+                            <h1 className="text-4xl md:text-5xl font-black text-navy dark:text-white mb-4 leading-tight">
+                                Bienvenido a <br className="md:hidden" />
+                                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-navy via-mint-hover to-mint dark:from-white dark:via-emerald-400 dark:to-mint pb-1 pr-2">tu mejor versión.</span>
+                            </h1>
+                            <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium max-w-2xl">
+                                Finanzas personales explicadas sin términos confusos. Comienza tu camino hacia la libertad hoy.
+                            </p>
+                        </div>
+
+                        <ArticleFeed />
+                    </main>
+
+                    <RegisterModal 
+                        isOpen={showRegisterModal} 
+                        onClose={() => setShowRegisterModal(false)}
+                        onRegister={handleRegister}
+                        darkMode={darkMode}
+                    />
+
+                    {/* Lógica para scroll automático al artículo desde el hash */}
+
+
+                    {/* Bottom Nav para APK/Mobile */}
+                    <div className="md:hidden fixed bottom-0 left-0 w-full transition-colors duration-300 backdrop-blur-md border-t z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:bg-gray-900/95 dark:border-gray-800 bg-white/95 border-gray-200">
+                        <div className="flex justify-around items-end h-16 pb-2 relative">
+                            <a href="aprende.html" className="flex flex-col items-center justify-center w-full text-mint dark:text-mint-light h-full border-t-2 border-mint dark:border-mint-light pt-1">
+                                <i className="fas fa-book-open text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-bold">Aprende</span>
+                            </a>
+                            <a href="quiz.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                 <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
+                                 <span className="text-[10px] font-semibold">Quiz</span>
+                            </a>
+                            
+                            {/* Centro (Inicio) más prominente inactivo */}
+                            <a href="index.html" className="flex flex-col items-center justify-center w-full relative z-10 bottom-3">
+                                <div className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 hover:text-mint dark:hover:text-mint-light w-14 h-14 rounded-full flex items-center justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-4 border-white dark:border-gray-900 transform hover:scale-105 smooth-transition">
+                                    <i className="fas fa-home text-2xl"></i>
+                                </div>
+                                <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-500 mt-1">Inicio</span>
+                            </a>
+
+                            <a href="tools.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-tools text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Útiles</span>
+                            </a>
+                            <a href="route.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                                <i className="fas fa-route text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Mi Ruta</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
