@@ -253,6 +253,70 @@
             );
         }
 
+        function NotificationToast() {
+            const [data, setData] = React.useState({ show: false, message: "", type: "success" });
+
+            React.useEffect(() => {
+                const handler = (e) => {
+                    setData({ show: true, message: e.detail.message, type: e.detail.type || "success" });
+                    setTimeout(() => setData(prev => ({ ...prev, show: false })), 4000);
+                };
+                window.addEventListener('prosper-alert', handler);
+                window.showToast = (message, type = "success") => {
+                    window.dispatchEvent(new CustomEvent('prosper-alert', { detail: { message, type } }));
+                };
+                return () => window.removeEventListener('prosper-alert', handler);
+            }, []);
+
+            if (!data.show) return null;
+
+            const colors = {
+                success: 'bg-mint text-white border-mint-hover shadow-lg shadow-mint/20',
+                error: 'bg-red-500 text-white border-red-600 shadow-lg shadow-red-500/20',
+                info: 'bg-navy dark:bg-gray-800 text-white border-blue-600 shadow-lg shadow-navy/20'
+            };
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+
+            return (
+                <div 
+                    className={`fixed top-8 left-1/2 -translate-x-1/2 z-[500] px-6 py-4 rounded-[1.5rem] border-2 flex items-center gap-4 animate-fade-in transition-all active:scale-95 cursor-pointer max-w-[90%] w-auto ${colors[data.type]}`} 
+                    onClick={() => setData({ ...data, show: false })}
+                >
+                    <i className={`fas ${icons[data.type]} text-2xl`}></i>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-widest leading-none mb-1 opacity-70">
+                            {data.type === 'success' ? 'Éxito' : (data.type === 'error' ? 'Error' : 'Notificación')}
+                        </span>
+                        <span className="text-xs font-bold leading-tight">{data.message}</span>
+                    </div>
+                </div>
+            );
+        }
+
+        function CustomConfirm({ isOpen, message, onConfirm, onCancel }) {
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-navy/80 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white dark:bg-[#0F172A] w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 dark:border-white/5 mx-auto">
+                        <div className="p-8 text-center text-navy dark:text-white">
+                            <i className="fas fa-question-circle text-4xl text-mint mb-4"></i>
+                            <h3 className="text-xl font-black mb-2 tracking-tight">¿Estás seguro?</h3>
+                            <p className="text-sm font-medium opacity-70 mb-8">{message}</p>
+                            <div className="flex gap-4">
+                                <button onClick={onCancel} className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-navy dark:hover:text-white transition-colors">Cancelar</button>
+                                <button onClick={onConfirm} className="flex-1 py-4 bg-mint text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">Confirmar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         function QuizList() {
             const [answers, setAnswers] = useState(() => {
                 const saved = localStorage.getItem('prosper_quiz_answers');
@@ -262,6 +326,8 @@
                 const saved = localStorage.getItem('prosper_quiz_scores');
                 return saved ? JSON.parse(saved) : {};
             });
+
+            const [showConfirmReset, setShowConfirmReset] = useState(false);
 
             const handleAnswer = (qId, optIdx, correctIdx) => {
                 if (answers[qId] !== undefined) return;
@@ -277,21 +343,25 @@
             };
 
             const resetProgress = () => {
-                if(confirm("¿Estás seguro de que deseas reiniciar todo el progreso del quiz?")) {
-                    setAnswers({});
-                    setScores({});
-                    localStorage.removeItem('prosper_quiz_answers');
-                    localStorage.removeItem('prosper_quiz_scores');
-                }
+                setShowConfirmReset(true);
+            };
+
+            const confirmReset = () => {
+                setAnswers({});
+                setScores({});
+                localStorage.removeItem('prosper_quiz_answers');
+                localStorage.removeItem('prosper_quiz_scores');
+                setShowConfirmReset(false);
+                if (window.showToast) window.showToast("¡Progreso reiniciado correctamente!", "info");
             };
 
             const sendToFirebase = async () => {
                 const totalCorrect = Object.values(scores).filter(v => v).length;
                 if (window._firebaseRuta && window._firebaseRuta.guardarQuiz) {
                     await window._firebaseRuta.guardarQuiz(totalCorrect, answers);
-                    alert("¡Puntuación guardada exitosamente en tu perfil!");
+                    if (window.showToast) window.showToast("¡Puntuación guardada exitosamente en tu perfil!", "success");
                 } else {
-                    alert("Debes iniciar sesión para guardar tu progreso en la nube.");
+                    if (window.showToast) window.showToast("Debes iniciar sesión para guardar tu progreso.", "error");
                 }
             };
 
@@ -374,6 +444,12 @@
                             </div>
                         )
                     })}
+                    <CustomConfirm 
+                        isOpen={showConfirmReset} 
+                        message="Esta acción borrará todas tus respuestas y puntuaciones actuales del quiz. No se puede deshacer." 
+                        onConfirm={confirmReset}
+                        onCancel={() => setShowConfirmReset(false)}
+                    />
                 </div>
             )
         }
@@ -659,6 +735,7 @@
                     </div>
 
                     <FeedbackFAB />
+                    <NotificationToast />
                 </div>
             );
         }

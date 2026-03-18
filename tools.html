@@ -105,7 +105,7 @@
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-5 italic">Analiza cuánto podrías ahorrar si dejas de comprar ese "capricho" frecuente.</p>
                     <div className="space-y-4 mb-5">
                         <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="¿En qué gastas? (Ej. Café)" className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-mint rounded-xl outline-none font-semibold dark:text-white transition-all" />
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <input type="number" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="Costo ($)" className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none font-bold dark:text-white" />
                             <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none font-bold dark:text-white">
                                 <option value="1">1 vez/semana</option>
@@ -195,9 +195,9 @@
                 <div className="animate-fade-in space-y-4">
                     <p className="text-gray-600 dark:text-gray-400 text-sm italic mb-2">Mira cómo crece tu capital con el tiempo.</p>
                     <input type="number" value={p} onChange={(e)=>setP(e.target.value)} placeholder="Capital Inicial ($)" className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
-                    <div className="grid grid-cols-2 gap-4">
-                        <input type="number" value={r} onChange={(e)=>setR(e.target.value)} placeholder="% Anual" className="p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
-                        <input type="number" value={t} onChange={(e)=>setT(e.target.value)} placeholder="Años" className="p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="number" value={r} onChange={(e)=>setR(e.target.value)} placeholder="% Anual" className="p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all w-full" />
+                        <input type="number" value={t} onChange={(e)=>setT(e.target.value)} placeholder="Años" className="p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all w-full" />
                     </div>
                     <button onClick={calc} className="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl hover:bg-emerald-700 transition-all">Proyectar Crecimiento</button>
                     {res && (
@@ -270,32 +270,32 @@
             const activeTool = tools.find(t => t.id === activeId);
 
             return (
-                <div className="animate-fade-in">
-                    <div className="text-center mb-12">
+                <div className="animate-fade-in w-full max-w-full">
+                    <div className="text-center mb-12 px-2">
                         <h1 className="text-3xl md:text-4xl font-black text-navy dark:text-white uppercase tracking-tighter mb-4">Calculadoras de Precisión<span className="text-mint">.</span></h1>
                         <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto font-medium">Herramientas diseñadas para darte claridad absoluta sobre tus finanzas personales en segundos.</p>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-8">
+                    <div className="flex flex-col md:flex-row gap-4 md:gap-8 w-full max-w-full min-w-0">
                         {/* Navegación PC (Izquierda) / Móvil (Superior) */}
-                        <div className="flex md:flex-col overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 gap-3 scrollbar-hide w-full md:w-80 shrink-0">
+                        <div className="flex md:flex-col overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 gap-3 scrollbar-hide w-full md:w-80 shrink-0 snap-x">
                             {tools.map(tool => (
-                                <div key={tool.id} className="relative flex-shrink-0 md:w-full group">
-                                    <button onClick={() => setActiveId(tool.id)} className={`w-full flex items-center p-4 rounded-2xl transition-all border-2 relative overflow-hidden ${activeId === tool.id ? 'bg-white dark:bg-gray-800 border-mint/30 shadow-2xl scale-[1.03] z-10' : 'bg-white/50 dark:bg-gray-900/50 border-transparent opacity-60 hover:opacity-100'}`}>
+                                <div key={tool.id} className="relative flex-shrink-0 w-64 md:w-full group snap-center">
+                                    <button onClick={() => setActiveId(tool.id)} className={`w-full flex items-center p-3 md:p-4 rounded-2xl transition-all border-2 relative overflow-hidden ${activeId === tool.id ? 'bg-white dark:bg-gray-800 border-mint/30 shadow-2xl scale-[1.03] z-10' : 'bg-white/50 dark:bg-gray-900/50 border-transparent opacity-60 hover:opacity-100'}`}>
                                         {activeId === tool.id && <div className="absolute left-0 bottom-0 md:bottom-auto md:top-0 md:w-1.5 w-full h-1 md:h-full bg-mint shadow-[0_0_15px_rgba(16,185,129,0.8)]"></div>}
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-50 dark:bg-gray-900 shadow-sm border dark:border-gray-700">
+                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-50 dark:bg-gray-900 shadow-sm border dark:border-gray-700 shrink-0">
                                             <i className={`fas ${tool.icon} ${tool.color} text-base`}></i>
                                         </div>
-                                        <span className="ml-4 font-black text-[11px] text-navy dark:text-white uppercase tracking-tighter whitespace-nowrap">{tool.name}</span>
+                                        <span className="ml-3 md:ml-4 font-black text-[11px] text-navy dark:text-white uppercase tracking-tighter truncate">{tool.name}</span>
                                     </button>
                                     
-                                    {/* Botón de Información (i) */}
-                                    <div className="absolute top-2 right-2 z-20">
+                                    {/* Botón de Información (i) - Solo PC */}
+                                    <div className="absolute top-2 right-2 z-20 hidden md:block">
                                         <div className="group/info relative">
                                             <button className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-[10px] text-gray-400 hover:bg-mint hover:text-white transition-all">
                                                 <i className="fas fa-info"></i>
                                             </button>
-                                            <div className="absolute left-full ml-3 top-0 w-48 p-3 bg-navy text-white text-[10px] rounded-xl shadow-2xl opacity-0 group-hover/info:opacity-100 pointer-events-none transition-opacity z-50 font-medium leading-relaxed border border-white/10 backdrop-blur-md">
+                                            <div className="absolute right-0 md:left-full md:right-auto md:ml-3 top-6 md:top-0 w-48 p-3 bg-navy text-white text-[10px] rounded-xl shadow-2xl opacity-0 group-hover/info:opacity-100 pointer-events-none transition-opacity z-50 font-medium leading-relaxed border border-white/10 backdrop-blur-md">
                                                 {tool.info}
                                             </div>
                                         </div>
@@ -305,22 +305,22 @@
                         </div>
 
                         {/* Visor de Herramienta */}
-                        <div className="flex-grow bg-white dark:bg-gray-800 p-8 md:p-12 rounded-[3.5rem] shadow-2xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
+                        <div className="flex-grow bg-white dark:bg-gray-800 p-5 md:p-12 rounded-[2rem] md:rounded-[3.5rem] shadow-2xl border border-gray-100 dark:border-gray-700 relative overflow-hidden w-full min-w-0 max-w-full sm:p-8">
+                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none hidden md:block">
                                 <i className={`fas ${activeTool.icon} text-[15rem]`}></i>
                             </div>
                             
                             <div className="relative z-10">
-                                <div className="mb-10 flex items-center gap-5">
-                                    <div className="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-2xl flex items-center justify-center shadow-inner border dark:border-gray-800">
-                                        <i className={`fas ${activeTool.icon} ${activeTool.color} text-3xl`}></i>
+                                <div className="mb-6 md:mb-10 flex flex-col sm:flex-row sm:items-center gap-4 md:gap-5">
+                                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-50 dark:bg-gray-900 rounded-2xl flex items-center justify-center shadow-inner border dark:border-gray-800 shrink-0">
+                                        <i className={`fas ${activeTool.icon} ${activeTool.color} text-2xl md:text-3xl`}></i>
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-black text-navy dark:text-white uppercase tracking-tighter leading-none mb-1">{activeTool.name}</h2>
+                                        <h2 className="text-xl md:text-2xl font-black text-navy dark:text-white uppercase tracking-tighter leading-none mb-1">{activeTool.name}</h2>
                                         <span className="text-[10px] font-black text-mint uppercase tracking-widest">Herramienta Activa</span>
                                     </div>
                                 </div>
-                                <div className="max-w-xl">
+                                <div className="max-w-xl w-full">
                                     {activeTool.component}
                                 </div>
                             </div>
@@ -547,6 +547,51 @@
             );
         }
 
+        function NotificationToast() {
+            const [data, setData] = React.useState({ show: false, message: "", type: "success" });
+
+            React.useEffect(() => {
+                const handler = (e) => {
+                    setData({ show: true, message: e.detail.message, type: e.detail.type || "success" });
+                    setTimeout(() => setData(prev => ({ ...prev, show: false })), 4000);
+                };
+                window.addEventListener('prosper-alert', handler);
+                window.showToast = (message, type = "success") => {
+                    window.dispatchEvent(new CustomEvent('prosper-alert', { detail: { message, type } }));
+                };
+                return () => window.removeEventListener('prosper-alert', handler);
+            }, []);
+
+            if (!data.show) return null;
+
+            const colors = {
+                success: 'bg-mint text-white border-mint-hover shadow-lg shadow-mint/20',
+                error: 'bg-red-500 text-white border-red-600 shadow-lg shadow-red-500/20',
+                info: 'bg-navy dark:bg-gray-800 text-white border-blue-600 shadow-lg shadow-navy/20'
+            };
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+
+            return (
+                <div 
+                    className={`fixed top-8 left-1/2 -translate-x-1/2 z-[500] px-6 py-4 rounded-[1.5rem] border-2 flex items-center gap-4 animate-fade-in transition-all active:scale-95 cursor-pointer max-w-[90%] w-auto ${colors[data.type]}`} 
+                    onClick={() => setData({ ...data, show: false })}
+                >
+                    <i className={`fas ${icons[data.type]} text-2xl`}></i>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-widest leading-none mb-1 opacity-70">
+                            {data.type === 'success' ? 'Éxito' : (data.type === 'error' ? 'Error' : 'Notificación')}
+                        </span>
+                        <span className="text-xs font-bold leading-tight">{data.message}</span>
+                    </div>
+                </div>
+            );
+        }
+
         function ToolsApp() {
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
             const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -676,7 +721,7 @@
                         )}
                     </header>
 
-                    <main className={`flex-grow mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 transition-all duration-500 animate-fade-in ${contentWidth}`}>
+                    <main className={`flex-grow w-full max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-36 md:pb-12 transition-all duration-500 animate-fade-in ${contentWidth}`}>
                         <ToolsDashboard />
                     </main>
 
@@ -719,6 +764,7 @@
                     </div>
 
                     <FeedbackFAB />
+                    <NotificationToast />
                 </div>
             );
         }

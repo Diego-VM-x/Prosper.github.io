@@ -350,6 +350,51 @@
             );
         }
 
+        function NotificationToast() {
+            const [data, setData] = React.useState({ show: false, message: "", type: "success" });
+
+            React.useEffect(() => {
+                const handler = (e) => {
+                    setData({ show: true, message: e.detail.message, type: e.detail.type || "success" });
+                    setTimeout(() => setData(prev => ({ ...prev, show: false })), 4000);
+                };
+                window.addEventListener('prosper-alert', handler);
+                window.showToast = (message, type = "success") => {
+                    window.dispatchEvent(new CustomEvent('prosper-alert', { detail: { message, type } }));
+                };
+                return () => window.removeEventListener('prosper-alert', handler);
+            }, []);
+
+            if (!data.show) return null;
+
+            const colors = {
+                success: 'bg-mint text-white border-mint-hover shadow-lg shadow-mint/20',
+                error: 'bg-red-500 text-white border-red-600 shadow-lg shadow-red-500/20',
+                info: 'bg-navy dark:bg-gray-800 text-white border-blue-600 shadow-lg shadow-navy/20'
+            };
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+
+            return (
+                <div 
+                    className={`fixed top-8 left-1/2 -translate-x-1/2 z-[500] px-6 py-4 rounded-[1.5rem] border-2 flex items-center gap-4 animate-fade-in transition-all active:scale-95 cursor-pointer max-w-[90%] w-auto ${colors[data.type]}`} 
+                    onClick={() => setData({ ...data, show: false })}
+                >
+                    <i className={`fas ${icons[data.type]} text-2xl`}></i>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-widest leading-none mb-1 opacity-70">
+                            {data.type === 'success' ? 'Éxito' : (data.type === 'error' ? 'Error' : 'Notificación')}
+                        </span>
+                        <span className="text-xs font-bold leading-tight">{data.message}</span>
+                    </div>
+                </div>
+            );
+        }
+
         function App() {
             const [showRegisterModal, setShowRegisterModal] = React.useState(false);
             const [isLoggedIn, setIsLoggedIn] = React.useState(() => localStorage.getItem('isLoggedIn') === 'true');
@@ -425,6 +470,8 @@
                         onRegister={handleRegister}
                         darkMode={darkMode}
                     />
+
+                    <NotificationToast />
                 </div>
             );
         }
