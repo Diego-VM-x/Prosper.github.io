@@ -104,16 +104,25 @@
 
                         unsubscribe = window._firebaseRuta.inicializar({
                             onSesion: (usuario) => {
-                                // Auth resuelto. Si no hay usuario, dejamos defaults.
+                                // Auth resuelto. Si no hay usuario, reseteamos a default inmediatamente.
                                 if (!usuario) {
+                                    setHabits(DEFAULT_HABITS);
+                                    localStorage.removeItem('user_habits');
                                     setCargando(false);
                                 }
                             },
                             onHabitosListos: (habitosFirestore) => {
-                                // ✅ Hábitos cargados desde Firestore (sesión confirmada)
-                                setHabits(habitosFirestore);
-                                localStorage.setItem('user_habits', JSON.stringify(habitosFirestore));
-                                habitosCargadosDesdeFirestore = true;
+                                if (habitosFirestore !== null) {
+                                    // ✅ Hemos cargado datos reales de este usuario
+                                    setHabits(habitosFirestore);
+                                    localStorage.setItem('user_habits', JSON.stringify(habitosFirestore));
+                                    habitosCargadosDesdeFirestore = true;
+                                } else {
+                                    // ✖️ Usuario logueado pero sin datos en la nube: usar default
+                                    setHabits(DEFAULT_HABITS);
+                                    localStorage.removeItem('user_habits');
+                                    habitosCargadosDesdeFirestore = true; // permitimos guardar desde ahora
+                                }
                                 setCargando(false);
                             }
                         });
@@ -125,6 +134,7 @@
                     if (unsubscribe) unsubscribe();
                 };
             }, []);
+
 
             // ── Guardar en localStorage + Firestore con debounce ─────────────────
             useEffect(() => {
