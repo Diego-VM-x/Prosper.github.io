@@ -29,6 +29,37 @@ export async function guardarHabitos(habitos) {
   }
 }
 
+export async function guardarQuiz(score, answers) {
+  const usuario = auth.currentUser;
+  if (!usuario) return;
+  try {
+    await setDoc(doc(db, "quizes_usuarios", usuario.uid), {
+      score,
+      answers,
+      actualizadoEn: new Date().toISOString(),
+      uid: usuario.uid,
+    });
+  } catch (e) {
+    console.warn("Error al guardar quiz:", e.message);
+  }
+}
+
+export async function guardarSugerencia(rating, suggestion) {
+  const usuario = auth.currentUser;
+  try {
+    const id = Date.now().toString();
+    await setDoc(doc(db, "sugerencias", id), {
+      rating,
+      suggestion,
+      fecha: new Date().toISOString(),
+      uid: usuario ? usuario.uid : "invitado",
+      email: usuario ? usuario.email : "no_login"
+    });
+  } catch (e) {
+    console.warn("Error al enviar sugerencia:", e.message);
+  }
+}
+
 export function inicializar({ onSesion, onHabitosListos }) {
   return onAuthStateChanged(auth, async (usuario) => {
     if (usuario) {
@@ -56,4 +87,4 @@ export function inicializar({ onSesion, onHabitosListos }) {
   });
 }
 
-window._firebaseRuta = { guardarHabitos, inicializar };
+window._firebaseRuta = { guardarHabitos, guardarQuiz, guardarSugerencia, inicializar };

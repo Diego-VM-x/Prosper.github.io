@@ -64,18 +64,18 @@
 </head>
 
 <body
-    class="text-gray-800 antialiased selection:bg-mint-light selection:text-navy bg-cream dark:bg-gray-900 dark:text-white transition-colors duration-300">
+    class="text-gray-800 antialiased selection:bg-mint-light selection:text-navy bg-cream dark:bg-[#0B0F1A] dark:text-white transition-colors duration-300">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
         const DEFAULT_HABITS = [
-            { id: 1, text: "Registrar tus ingresos y gastos de hoy", icon: "fa-pen-to-square", completed: false },
-            { id: 2, text: "Llenar el sobre/cuenta de Fondo de Emergencia", icon: "fa-piggy-bank", completed: false },
-            { id: 3, text: "Saldar Tarjeta de Crédito al 100% totalero", icon: "fa-credit-card", completed: false },
-            { id: 4, text: "Ahorrar 20% del último ingreso según 50/30/20", icon: "fa-chart-pie", completed: false },
-            { id: 5, text: "Revisar o hacer tu primera Inversión indexada", icon: "fa-arrow-trend-up", completed: false },
+            { id: 1, text: "Ahorrar $1 de tu merienda", icon: "fa-piggy-bank", description: "El primer paso para invertir es tener capital. Empieza hoy con algo pequeño.", completed: false },
+            { id: 2, text: "Investigar qué es un ETF (5 min)", icon: "fa-search", description: "Aprende el concepto básico de los Fondos Indexados para diversificar tu futuro.", completed: false },
+            { id: 3, text: "Registrar un gasto hormiga", icon: "fa-pen-to-square", description: "Anota ese dulce o refresco que compraste hoy para ser consciente de tus gastos.", completed: false },
+            { id: 4, text: "Definir una meta de ahorro", icon: "fa-bullseye", description: "¿Quieres una consola, ropa o un viaje? Ponle nombre, fecha y monto a tu objetivo.", completed: false },
+            { id: 5, text: "Hablar de inversión con un amigo", icon: "fa-comments", description: "Compartir lo que aprendes en Prosper ayuda a que otros también mejoren su vida.", completed: false },
         ];
 
         // ── Bandera para evitar guardar antes de que Firestore cargue ──────────
@@ -104,12 +104,13 @@
             return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&details=${encodeURIComponent(descripcion)}&dates=${toISO(start)}/${toISO(end)}`;
         }
 
-        function ProgressTracker() {
+        function ProgressTracker({ isLoggedIn, contentWidth }) {
             const [habits, setHabits] = useState(() => {
                 const saved = localStorage.getItem('user_habits');
                 return saved ? JSON.parse(saved) : DEFAULT_HABITS;
             });
             const [newTaskText, setNewTaskText] = useState("");
+            const [newTaskDesc, setNewTaskDesc] = useState("");
             const [selectedIcon, setSelectedIcon] = useState("fa-star");
             const [guardando, setGuardando] = useState(false);
             const [statusMsg, setStatusMsg] = useState("");
@@ -189,17 +190,19 @@
                 const newHabit = {
                     id: Date.now(),
                     text: newTaskText,
+                    description: newTaskDesc,
                     icon: selectedIcon,
                     completed: false
                 };
                 setHabits([...habits, newHabit]);
                 setNewTaskText("");
+                setNewTaskDesc("");
                 setSelectedIcon("fa-star");
             };
 
             return (
-                <div className="max-w-2xl mx-auto space-y-6">
-                    <div className="bg-white dark:bg-navy rounded-3xl p-5 md:p-8 shadow-2xl border border-gray-100 dark:border-blue-900 card-hover transition-colors duration-300">
+                <div className="animate-fade-in">
+                    <div className="bg-white dark:bg-[#0F172A] rounded-3xl p-5 md:p-8 shadow-2xl border border-gray-100 dark:border-white/5 transition-colors duration-300">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-extrabold flex items-center text-navy dark:text-white">
                                 <i className="fas fa-flag-checkered text-mint mr-3"></i> Mis Retos Diarios
@@ -219,28 +222,37 @@
                                     <i className={`fas fa-star ${progressPercentage === 100 && habits.length > 0 ? 'text-yellow-400' : 'text-gray-200 dark:text-blue-800'} text-xl`}></i>
                                 </div>
                             </div>
-                            <div className="w-full bg-gray-200 dark:bg-blue-950 rounded-full h-4 overflow-hidden shadow-inner">
+                            <div className="w-full bg-gray-200 dark:bg-blue-950 rounded-full h-4 overflow-hidden shadow-inner border dark:border-white/5">
                                 <div
-                                    className="bg-gradient-to-r from-emerald-400 to-mint h-full rounded-full smooth-transition relative shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                                    className={`bg-gradient-to-r from-emerald-400 to-mint h-full smooth-transition relative shadow-[0_0_15px_rgba(16,185,129,0.4)] ${progressPercentage === 100 ? '' : 'rounded-r-lg'}`}
                                     style={{ width: `${progressPercentage}%` }}
                                 ></div>
                             </div>
                         </div>
                         <div className="mb-8 p-4 bg-gray-50 dark:bg-blue-900/30 rounded-2xl border border-gray-100 dark:border-blue-800">
-                            <form onSubmit={addHabit} className="flex flex-col sm:flex-row gap-2 mb-4">
+                            <form onSubmit={addHabit} className="space-y-3 mb-4">
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                    <input
+                                        type="text"
+                                        value={newTaskText}
+                                        onChange={(e) => setNewTaskText(e.target.value)}
+                                        placeholder="Escribe un nuevo objetivo..."
+                                        className="flex-grow bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mint focus:ring-2 focus:ring-mint/20 text-navy dark:text-white smooth-transition"
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="bg-mint hover:bg-mint-hover text-white px-6 py-3 rounded-xl transition-all active:scale-95 font-bold text-sm shrink-0 shadow-lg shadow-mint/20"
+                                    >
+                                        <i className="fas fa-plus mr-1"></i> Añadir
+                                    </button>
+                                </div>
                                 <input
                                     type="text"
-                                    value={newTaskText}
-                                    onChange={(e) => setNewTaskText(e.target.value)}
-                                    placeholder="Escribe un nuevo objetivo..."
-                                    className="flex-grow bg-white dark:bg-blue-950 border border-gray-200 dark:border-blue-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mint focus:ring-2 focus:ring-mint/20 text-navy dark:text-white smooth-transition"
+                                    value={newTaskDesc}
+                                    onChange={(e) => setNewTaskDesc(e.target.value)}
+                                    placeholder="Agrega una descripción opcional..."
+                                    className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-mint focus:ring-2 focus:ring-mint/20 text-navy dark:text-white smooth-transition opacity-80"
                                 />
-                                <button
-                                    type="submit"
-                                    className="bg-mint hover:bg-mint-hover text-white px-6 py-3 rounded-xl transition-all active:scale-95 font-bold text-sm shrink-0 shadow-lg shadow-mint/20"
-                                >
-                                    <i className="fas fa-plus mr-1"></i> Añadir
-                                </button>
                             </form>
                             
                             <div className="flex flex-wrap gap-2">
@@ -276,8 +288,9 @@
                                             {habit.completed && <i className="fas fa-check absolute text-white text-sm pointer-events-none"></i>}
                                         </div>
                                         <span className="w-8 text-center text-mint mx-3 text-lg opacity-80"><i className={`fas ${habit.icon}`}></i></span>
-                                    <span className={`text-base font-semibold tracking-wide smooth-transition flex-grow ${habit.completed ? 'line-through opacity-50 text-gray-500 dark:text-gray-400' : 'text-navy dark:text-white'}`}>
+                                        <span className={`text-base font-semibold tracking-wide smooth-transition flex-grow ${habit.completed ? 'line-through opacity-50 text-gray-500 dark:text-gray-400' : 'text-navy dark:text-white'}`}>
                                             {habit.text}
+                                            <span className="block text-[10px] font-medium opacity-60 mt-0.5 tracking-normal leading-tight">{habit.description}</span>
                                         </span>
                                     </label>
                                     
@@ -286,8 +299,8 @@
                                         <button
                                             onClick={() => {
                                                 const titulo = `Prosper: ${habit.text}`;
-                                                const desc = "Recordatorio de mi ruta de aprendizaje financiero en Prosper. No olvides completar el módulo hoy.";
-                                                const link = generarLinkCalendario(titulo, desc, 24); // Programar para dentro de 24h
+                                                const desc = habit.description + " | Recordatorio de mi ruta Prosper.";
+                                                const link = generarLinkCalendario(titulo, desc, 24);
                                                 window.open(link, '_blank');
                                             }}
                                             className="w-10 h-10 rounded-xl bg-mint/10 hover:bg-navy text-mint hover:text-white smooth-transition flex items-center justify-center border border-mint/20"
@@ -308,10 +321,10 @@
                             ))}
                         </div>
 
-                        {/* Aviso si no hay sesión iniciada */}
-                        <p id="aviso-sin-sesion" className="text-center text-xs text-gray-400 mt-6 hidden">
-                            <i className="fas fa-cloud-slash mr-1"></i>
-                            Inicia sesión para guardar tu progreso en la nube.
+                        {/* Aviso de estado de sesión */}
+                        <p id="aviso-sin-sesion" className={`text-center text-xs mt-6 flex items-center justify-center font-bold tracking-tight ${isLoggedIn ? 'text-mint' : 'text-gray-400'}`}>
+                            <i className={`fas ${isLoggedIn ? 'fa-cloud-check' : 'fa-cloud-slash'} mr-2`}></i>
+                            {isLoggedIn ? '¡Sesión sincronizada! Tu progreso está a salvo en la nube.' : 'Inicia sesión para guardar tu progreso en la nube.'}
                         </p>
                     </div>
                 </div>
@@ -320,6 +333,7 @@
 
         function App() {
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const [contentWidth, setContentWidth] = useState(() => localStorage.getItem('contentWidth') || 'max-w-6xl');
             const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
             const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
             const [darkMode, setDarkMode] = useState(() => {
@@ -339,13 +353,11 @@
                                 setUserName(usuario.nombre);
                                 localStorage.setItem('isLoggedIn', 'true');
                                 localStorage.setItem('userName', usuario.nombre);
-                                document.getElementById('aviso-sin-sesion')?.classList.add('hidden');
                             } else {
                                 setIsLoggedIn(false);
                                 setUserName('');
                                 localStorage.setItem('isLoggedIn', 'false');
                                 localStorage.removeItem('userName');
-                                document.getElementById('aviso-sin-sesion')?.classList.remove('hidden');
                             }
                         });
                     }
@@ -357,14 +369,14 @@
                 localStorage.setItem('darkMode', darkMode);
                 if (darkMode) {
                     document.documentElement.classList.add('dark');
-                    document.body.classList.add('bg-gray-900', 'text-white');
-                    document.body.classList.remove('bg-cream', 'text-gray-800');
                 } else {
                     document.documentElement.classList.remove('dark');
-                    document.body.classList.add('bg-cream', 'text-gray-800');
-                    document.body.classList.remove('bg-gray-900', 'text-white');
                 }
             }, [darkMode]);
+
+            useEffect(() => {
+                localStorage.setItem('contentWidth', contentWidth);
+            }, [contentWidth]);
 
             const toggleUserMenu = () => {
                 setMobileMenuOpen(!mobileMenuOpen);
@@ -373,7 +385,7 @@
             return (
                 <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
                     <header className={`backdrop-blur-md shadow-sm sticky top-0 z-50 border-b pb-safe-top transition-colors duration-300 ${darkMode ? 'bg-gray-900/90 border-gray-800 text-white' : 'bg-white/90 border-gray-100 text-gray-800'}`}>
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className={`mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ${contentWidth}`}>
                             <div className="flex justify-between h-16 md:h-20 items-center">
                                 <div className="flex items-center cursor-pointer" onClick={() => window.location.href = 'index.html'}>
                                     <div className="bg-mint text-white p-2 rounded-xl mr-3 shadow-md transform rotate-3">
@@ -426,13 +438,33 @@
                                             <i className="fas fa-sign-out-alt w-6"></i> Cerrar Sesión
                                         </button>
                                     )}
+
+                                    {/* Ajuste de Ancho (PC) */}
+                                    <div className="hidden md:block p-4 border-t border-gray-100 dark:border-gray-700">
+                                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-3">Anchura de la web</p>
+                                        <div className="flex gap-2 bg-gray-50 dark:bg-gray-900 p-1 rounded-xl">
+                                            {[
+                                                { id: 'max-w-4xl', label: 'Pequeño' },
+                                                { id: 'max-w-6xl', label: 'Mediano' },
+                                                { id: 'max-w-[1400px]', label: 'Grande' }
+                                            ].map(opt => (
+                                                <button 
+                                                    key={opt.id}
+                                                    onClick={() => setContentWidth(opt.id)}
+                                                    className={`flex-1 py-2 text-[9px] font-black uppercase rounded-lg transition-all ${contentWidth === opt.id ? 'bg-mint text-white shadow-md' : 'text-gray-400 hover:text-navy dark:hover:text-white'}`}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
                     </header>
 
-                    <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 w-full">
-                        <ProgressTracker />
+                    <main className={`flex-grow mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 transition-all duration-500 animate-fade-in ${contentWidth}`}>
+                        <ProgressTracker isLoggedIn={isLoggedIn} />
                     </main>
 
                     {/* Bottom Nav para APK/Mobile */}
