@@ -25,14 +25,14 @@ function mostrarMensaje(elementId, texto, tipo = "error") {
 
 function traducirError(codigo) {
   const errores = {
-    "auth/email-already-in-use":   "Este correo ya está registrado. Intenta iniciar sesión.",
-    "auth/weak-password":           "La contraseña debe tener al menos 6 caracteres.",
-    "auth/invalid-email":           "El formato del correo no es válido.",
-    "auth/user-not-found":          "No encontramos una cuenta con ese correo.",
-    "auth/wrong-password":          "Contraseña incorrecta. Inténtalo de nuevo.",
-    "auth/invalid-credential":      "Credenciales inválidas. Verifica tu correo y contraseña.",
-    "auth/too-many-requests":       "Demasiados intentos fallidos. Espera un momento.",
-    "auth/network-request-failed":  "Sin conexión. Revisa tu internet.",
+    "auth/email-already-in-use": "Este correo ya está registrado. Intenta iniciar sesión.",
+    "auth/weak-password": "La contraseña debe tener al menos 6 caracteres.",
+    "auth/invalid-email": "El formato del correo no es válido.",
+    "auth/user-not-found": "No encontramos una cuenta con ese correo.",
+    "auth/wrong-password": "Contraseña incorrecta. Inténtalo de nuevo.",
+    "auth/invalid-credential": "Credenciales inválidas. Verifica tu correo y contraseña.",
+    "auth/too-many-requests": "Demasiados intentos fallidos. Espera un momento.",
+    "auth/network-request-failed": "Sin conexión. Revisa tu internet.",
   };
   return errores[codigo] || "Algo salió mal. Por favor intenta de nuevo.";
 }
@@ -43,8 +43,8 @@ if (formRegistro) {
   formRegistro.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = formRegistro.querySelector("button[type='submit']");
-    const nombre   = document.getElementById("reg-nombre").value.trim();
-    const email    = document.getElementById("reg-email").value.trim();
+    const nombre = document.getElementById("reg-nombre").value.trim();
+    const email = document.getElementById("reg-email").value.trim();
     const password = document.getElementById("reg-password").value;
 
     btn.disabled = true;
@@ -71,7 +71,7 @@ if (formLogin) {
   formLogin.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = formLogin.querySelector("button[type='submit']");
-    const email    = document.getElementById("login-email").value.trim();
+    const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value;
 
     btn.disabled = true;
@@ -100,24 +100,24 @@ if (btnLogout) {
 
 // ─── Escuchar cambios de sesión → actualizar UI ───────────────────────────────
 escucharSesion((usuario) => {
-  const panelInvitado  = document.getElementById("ui-invitado");
-  const panelUsuario   = document.getElementById("ui-usuario");
-  const nombreUsuario  = document.getElementById("nombre-usuario");
+  const panelInvitado = document.getElementById("ui-invitado");
+  const panelUsuario = document.getElementById("ui-usuario");
+  const nombreUsuario = document.getElementById("nombre-usuario");
 
   if (usuario) {
     // Usuario autenticado
     const nombre = usuario.displayName || usuario.email.split("@")[0];
     if (nombreUsuario) nombreUsuario.textContent = nombre;
-    if (panelInvitado)  panelInvitado.style.display  = "none";
-    if (panelUsuario)   panelUsuario.style.display    = "block";
+    if (panelInvitado) panelInvitado.style.display = "none";
+    if (panelUsuario) panelUsuario.style.display = "block";
 
     // Compatibilidad con el sistema previo de localStorage
-    localStorage.setItem("userName",   nombre);
+    localStorage.setItem("userName", nombre);
     localStorage.setItem("isLoggedIn", "true");
   } else {
     // Sin sesión
-    if (panelInvitado) panelInvitado.style.display  = "flex";
-    if (panelUsuario)  panelUsuario.style.display    = "none";
+    if (panelInvitado) panelInvitado.style.display = "flex";
+    if (panelUsuario) panelUsuario.style.display = "none";
 
     localStorage.removeItem("userName");
     localStorage.setItem("isLoggedIn", "false");
@@ -152,8 +152,8 @@ document.getElementById("modal-auth")?.addEventListener("click", (e) => {
 });
 
 // Exponer función globalmente (para botones inline con onclick)
-window.abrirModalAuth      = () => abrirModal("modal-auth");
-window.cerrarModalAuth     = () => cerrarModal("modal-auth");
+window.abrirModalAuth = () => abrirModal("modal-auth");
+window.cerrarModalAuth = () => cerrarModal("modal-auth");
 window.cerrarSesionFirebase = async () => {
   await cerrarSesion();
   // El observer onAuthStateChanged actualizará el localStorage automáticamente,

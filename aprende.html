@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aprende Finanzas - Prosper</title>
-    <meta name="description" content="Domina conceptos como el interés compuesto, la regla 50/30/20 y la inversión inteligente con nuestras lecturas educativas.">
+    <meta name="description"
+        content="Domina conceptos como el interés compuesto, la regla 50/30/20 y la inversión inteligente con nuestras lecturas educativas.">
     <meta property="og:title" content="Aprende Finanzas - Prosper">
     <meta property="og:description" content="Artículos educativos sobre ahorro, inversión y mentalidad financiera.">
     <link rel="manifest" href="manifest.json">
@@ -49,26 +50,30 @@
         }
     </script>
     <script>
-        // Aplicar el modo oscuro inmediatamente para evitar el flash blanco
-        (function() {
-            const savedMode = localStorage.getItem('darkMode');
-            const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const isDark = savedMode === 'true' || (savedMode === null && systemMode);
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        })();
+            // Aplicar el modo oscuro inmediatamente para evitar el flash blanco
+            (function () {
+                const savedMode = localStorage.getItem('darkMode');
+                const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const isDark = savedMode === 'true' || (savedMode === null && systemMode);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
     <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="text-gray-800 antialiased selection:bg-mint-light selection:text-navy bg-cream dark:bg-gray-900 dark:text-white transition-colors duration-300">
+<body
+    class="text-gray-800 antialiased selection:bg-mint-light selection:text-navy bg-cream dark:bg-gray-900 dark:text-white transition-colors duration-300">
     <div id="root"></div>
 
     <script type="text/babel">
@@ -200,8 +205,8 @@
                 }
             }, []);
 
-            const filteredArticles = filter === "Todas" 
-                ? ARTICLES 
+            const filteredArticles = filter === "Todas"
+                ? ARTICLES
                 : ARTICLES.filter(a => a.tag === filter);
 
             return (
@@ -210,7 +215,7 @@
                         <h2 className="text-2xl font-extrabold text-navy dark:text-white flex items-center">
                             <i className="fas fa-book-open text-mint mr-3"></i> Lecturas sugeridas para ti
                         </h2>
-                        
+
                         <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
                             {categories.map(cat => (
                                 <button
@@ -310,7 +315,7 @@
                             <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-mint transition-colors">
                                 <i className="fas fa-times text-xl"></i>
                             </button>
-                            
+
                             <div className="text-center mb-8">
                                 <div className="bg-mint/10 text-mint w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transform rotate-3">
                                     <i className="fas fa-user-plus text-2xl"></i>
@@ -322,41 +327,41 @@
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
                                     <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Nombre Completo</label>
-                                    <input 
+                                    <input
                                         required
                                         type="text"
                                         placeholder="Ej. Juan Pérez"
                                         className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
                                         value={formData.name}
-                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Correo Electrónico</label>
-                                    <input 
+                                    <input
                                         required
                                         type="email"
                                         placeholder="tu@email.com"
                                         className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
                                         value={formData.email}
-                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Meta Financiera</label>
-                                    <textarea 
+                                    <textarea
                                         required
                                         placeholder="Ej. Comprar mi primer depa, invertir en la bolsa..."
                                         rows="2"
                                         className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
                                         value={formData.goal}
-                                        onChange={(e) => setFormData({...formData, goal: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                                     ></textarea>
                                 </div>
 
-                                <button 
+                                <button
                                     disabled={isSubmitting}
-                                    type="submit" 
+                                    type="submit"
                                     className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] text-white font-bold py-4 rounded-2xl shadow-lg shadow-navy/20 transform hover:scale-[1.02] active:scale-95 transition-all mt-4 flex items-center justify-center"
                                 >
                                     {isSubmitting ? (
@@ -466,7 +471,7 @@
                                     </a>
                                     <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                                         <div className="flex items-center">
-                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i> 
+                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i>
                                             Tema {darkMode ? 'Claro' : 'Oscuro'}
                                         </div>
                                     </button>
@@ -495,8 +500,8 @@
                         <ArticleFeed />
                     </main>
 
-                    <RegisterModal 
-                        isOpen={showRegisterModal} 
+                    <RegisterModal
+                        isOpen={showRegisterModal}
                         onClose={() => setShowRegisterModal(false)}
                         onRegister={handleRegister}
                         darkMode={darkMode}
@@ -513,10 +518,10 @@
                                 <span className="text-[10px] font-bold">Aprende</span>
                             </a>
                             <a href="quiz.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
-                                 <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
-                                 <span className="text-[10px] font-semibold">Quiz</span>
+                                <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
+                                <span className="text-[10px] font-semibold">Quiz</span>
                             </a>
-                            
+
                             {/* Centro (Inicio) más prominente inactivo */}
                             <a href="index.html" className="flex flex-col items-center justify-center w-full relative z-10 bottom-3">
                                 <div className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 hover:text-mint dark:hover:text-mint-light w-14 h-14 rounded-full flex items-center justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-4 border-white dark:border-gray-900 transform hover:scale-105 smooth-transition">

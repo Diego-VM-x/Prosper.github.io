@@ -35,15 +35,15 @@ files.forEach(file => {
 
     // Make Dashboard panels dark-compatible
     content = content.replace(
-        /bg-white rounded-3xl/g, 
+        /bg-white rounded-3xl/g,
         'bg-white dark:bg-gray-800 rounded-3xl'
     );
     content = content.replace(
-        /bg-white rounded-2xl/g, 
+        /bg-white rounded-2xl/g,
         'bg-white dark:bg-gray-800 rounded-2xl'
     );
     content = content.replace(
-        /bg-white rounded-xl/g, 
+        /bg-white rounded-xl/g,
         'bg-white dark:bg-gray-800 rounded-xl'
     );
     content = content.replace(

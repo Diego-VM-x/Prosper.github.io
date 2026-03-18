@@ -32,9 +32,9 @@ const firebaseConfig = {
 };
 
 // ─── Inicialización ──────────────────────────────────────────────────────────
-const app        = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db   = getFirestore(app);
+export const db = getFirestore(app);
 
 // ─── Módulo de Autenticación ─────────────────────────────────────────────────
 
@@ -104,11 +104,11 @@ export async function guardarMetaAhorro(monto, descripcion) {
   }
 
   const docRef = await addDoc(collection(db, "metas_usuarios"), {
-    uid:         usuario.uid,           // Vincula la meta al usuario
-    email:       usuario.email,         // Útil para consultas de admin
-    monto:       Number(monto),         // Normalizado a número
+    uid: usuario.uid,           // Vincula la meta al usuario
+    email: usuario.email,         // Útil para consultas de admin
+    monto: Number(monto),         // Normalizado a número
     descripcion: descripcion.trim(),
-    creadoEn:    serverTimestamp(),     // Timestamp del servidor (no del cliente)
+    creadoEn: serverTimestamp(),     // Timestamp del servidor (no del cliente)
   });
 
   console.log("✅ Meta guardada con ID:", docRef.id);
