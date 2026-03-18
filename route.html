@@ -64,7 +64,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect, useRef } = React;
 
         const DEFAULT_HABITS = [
             { id: 1, text: "Registrar tus ingresos y gastos de hoy", icon: "fa-pen-to-square", completed: false },
@@ -74,15 +74,58 @@
             { id: 5, text: "Revisar o hacer tu primera Inversión indexada", icon: "fa-arrow-trend-up", completed: false },
         ];
 
+        // ── Bandera para evitar guardar antes de que Firestore cargue ──────────
+        let habitosCargadosDesdeFirestore = false;
+
         function ProgressTracker() {
             const [habits, setHabits] = useState(() => {
                 const saved = localStorage.getItem('user_habits');
                 return saved ? JSON.parse(saved) : DEFAULT_HABITS;
             });
             const [newTaskText, setNewTaskText] = useState("");
+            const [guardando, setGuardando] = useState(false);
+            const [statusMsg, setStatusMsg] = useState("");
+            const guardarTimeout = useRef(null);
 
-            React.useEffect(() => {
+            // ── Cargar hábitos desde Firestore cuando el módulo esté listo ──────
+            useEffect(() => {
+                const intentarCargar = async () => {
+                    if (!window._firebaseRuta) return;
+                    const firebaseHabitos = await window._firebaseRuta.cargarHabitos();
+                    if (firebaseHabitos !== null) {
+                        setHabits(firebaseHabitos);
+                        localStorage.setItem('user_habits', JSON.stringify(firebaseHabitos));
+                    }
+                    habitosCargadosDesdeFirestore = true;
+                };
+
+                // Esperar a que el módulo ES esté disponible (puede tardar ~100ms)
+                const intervalo = setInterval(() => {
+                    if (window._firebaseRuta && window._firebaseRuta.cargarHabitos) {
+                        clearInterval(intervalo);
+                        intentarCargar();
+                    }
+                }, 200);
+
+                // Limpiar si el componente se desmonta
+                return () => clearInterval(intervalo);
+            }, []);
+
+            // ── Guardar en localStorage + Firestore con debounce ─────────────────
+            useEffect(() => {
                 localStorage.setItem('user_habits', JSON.stringify(habits));
+
+                if (!habitosCargadosDesdeFirestore || !window._firebaseRuta) return;
+
+                // Debounce: esperar 800ms sin cambios antes de guardar en Firestore
+                clearTimeout(guardarTimeout.current);
+                guardarTimeout.current = setTimeout(async () => {
+                    setGuardando(true);
+                    await window._firebaseRuta.guardarHabitos(habits);
+                    setGuardando(false);
+                    setStatusMsg("✓ Guardado");
+                    setTimeout(() => setStatusMsg(""), 2000);
+                }, 800);
             }, [habits]);
 
             const toggleHabit = (id) => {
@@ -95,7 +138,7 @@
                 const newHabit = {
                     id: Date.now(),
                     text: newTaskText,
-                    icon: "fa-star", // Icono por defecto para nuevas tareas
+                    icon: "fa-star",
                     completed: false
                 };
                 setHabits([...habits, newHabit]);
@@ -112,9 +155,15 @@
             return (
                 <div className="max-w-2xl mx-auto space-y-6">
                     <div className="bg-white dark:bg-navy rounded-3xl p-5 md:p-8 shadow-2xl border border-gray-100 dark:border-blue-900 card-hover transition-colors duration-300">
-                        <h2 className="text-2xl font-extrabold mb-6 flex items-center text-navy dark:text-white">
-                            <i className="fas fa-flag-checkered text-mint mr-3"></i> Mi Ruta Diaria
-                        </h2>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-extrabold flex items-center text-navy dark:text-white">
+                                <i className="fas fa-flag-checkered text-mint mr-3"></i> Mi Ruta Diaria
+                            </h2>
+                            {/* Indicador de guardado */}
+                            <span className={`text-xs font-semibold transition-all duration-300 ${guardando ? 'text-mint animate-pulse' : statusMsg ? 'text-mint' : 'text-gray-300'}`}>
+                                {guardando ? <span><i className="fas fa-circle-notch fa-spin mr-1"></i>Guardando...</span> : statusMsg}
+                            </span>
+                        </div>
 
                         <div className="mb-8 bg-gray-50 dark:bg-blue-900/50 rounded-2xl p-5 border border-gray-100 dark:border-blue-800 shadow-inner">
                             <div className="flex justify-between items-end mb-3">
@@ -134,16 +183,16 @@
                             </div>
                         </div>
 
-                        {/* Agregar nueva tarea - Optimizado para móvil */}
+                        {/* Agregar nueva tarea */}
                         <form onSubmit={addHabit} className="mb-8 flex flex-col sm:flex-row gap-2">
-                            <input 
+                            <input
                                 type="text"
                                 value={newTaskText}
                                 onChange={(e) => setNewTaskText(e.target.value)}
                                 placeholder="Escribe un nuevo objetivo..."
                                 className="flex-grow bg-gray-50 dark:bg-blue-950 border border-gray-200 dark:border-blue-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mint focus:ring-2 focus:ring-mint/20 text-navy dark:text-white smooth-transition"
                             />
-                            <button 
+                            <button
                                 type="submit"
                                 className="bg-mint hover:bg-mint-hover text-white px-6 py-3 rounded-xl transition-all active:scale-95 font-bold text-sm shrink-0 shadow-lg shadow-mint/20"
                             >
@@ -173,7 +222,7 @@
                                             {habit.text}
                                         </span>
                                     </label>
-                                    <button 
+                                    <button
                                         onClick={() => removeHabit(habit.id)}
                                         className="ml-2 w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white smooth-transition flex items-center justify-center border border-red-500/20 md:opacity-0 group-hover:opacity-100 opacity-100 shrink-0"
                                         title="Eliminar tarea"
@@ -183,116 +232,12 @@
                                 </div>
                             ))}
                         </div>
-                    </div>
-                </div>
-            );
-        }
 
-        function RegisterModal({ isOpen, onClose, onRegister, darkMode }) {
-            if (!isOpen) return null;
-
-            const [formData, setFormData] = React.useState({
-                name: '',
-                email: '',
-                goal: ''
-            });
-            const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                setIsSubmitting(true);
-
-                const formToSubmit = new FormData();
-                formToSubmit.append('name', formData.name);
-                formToSubmit.append('email', formData.email);
-                formToSubmit.append('meta_financiera', formData.goal);
-                formToSubmit.append('_captcha', 'false');
-                formToSubmit.append('_subject', 'Nuevo Registro Prosper');
-
-                try {
-                    await fetch('https://formspree.io/f/xlgpoajn', {
-                        method: 'POST',
-                        body: formToSubmit
-                    });
-                    localStorage.setItem('userName', formData.name);
-                    localStorage.setItem('isLoggedIn', 'true');
-                    onRegister(formData.name);
-                    onClose();
-                } catch (error) {
-                    localStorage.setItem('userName', formData.name);
-                    localStorage.setItem('isLoggedIn', 'true');
-                    onRegister(formData.name);
-                    onClose();
-                } finally {
-                    setIsSubmitting(false);
-                }
-            };
-
-            return (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm animate-fade-in">
-                    <div className={`w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-navy'}`}>
-                        <div className="relative p-6 md:p-8">
-                            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-mint transition-colors">
-                                <i className="fas fa-times text-xl"></i>
-                            </button>
-                            
-                            <div className="text-center mb-8">
-                                <div className="bg-mint/10 text-mint w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transform rotate-3">
-                                    <i className="fas fa-user-plus text-2xl"></i>
-                                </div>
-                                <h2 className="text-2xl font-black">Únete a Prosper.</h2>
-                                <p className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Comienza tu camino hacia la libertad financiera.</p>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Nombre Completo</label>
-                                    <input 
-                                        required
-                                        type="text"
-                                        placeholder="Ej. Juan Pérez"
-                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Correo Electrónico</label>
-                                    <input 
-                                        required
-                                        type="email"
-                                        placeholder="tu@email.com"
-                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 opacity-70">Meta Financiera</label>
-                                    <textarea 
-                                        required
-                                        placeholder="Ej. Comprar mi primer depa, invertir en la bolsa..."
-                                        rows="2"
-                                        className={`w-full p-3.5 rounded-2xl border bg-cream outline-none focus:ring-2 focus:ring-mint/50 transition-all ${darkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-100 bg-gray-50'}`}
-                                        value={formData.goal}
-                                        onChange={(e) => setFormData({...formData, goal: e.target.value})}
-                                    ></textarea>
-                                </div>
-
-                                <button 
-                                    disabled={isSubmitting}
-                                    type="submit" 
-                                    className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] text-white font-bold py-4 rounded-2xl shadow-lg shadow-navy/20 transform hover:scale-[1.02] active:scale-95 transition-all mt-4 flex items-center justify-center"
-                                >
-                                    {isSubmitting ? (
-                                        <i className="fas fa-circle-notch fa-spin mr-2"></i>
-                                    ) : (
-                                        <i className="fas fa-paper-plane mr-2"></i>
-                                    )}
-                                    {isSubmitting ? 'Enviando...' : 'Empezar ahora'}
-                                </button>
-                            </form>
-                        </div>
+                        {/* Aviso si no hay sesión iniciada */}
+                        <p id="aviso-sin-sesion" className="text-center text-xs text-gray-400 mt-6 hidden">
+                            <i className="fas fa-cloud-slash mr-1"></i>
+                            Inicia sesión para guardar tu progreso en la nube.
+                        </p>
                     </div>
                 </div>
             );
@@ -300,7 +245,6 @@
 
         function App() {
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-            const [showRegisterModal, setShowRegisterModal] = useState(false);
             const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
             const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
             const [darkMode, setDarkMode] = useState(() => {
@@ -309,20 +253,32 @@
                 return window.matchMedia('(prefers-color-scheme: dark)').matches;
             });
 
-            React.useEffect(() => {
-                localStorage.setItem('isLoggedIn', isLoggedIn);
-            }, [isLoggedIn]);
-
-            React.useEffect(() => {
-                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                const handleChange = (e) => {
-                    setDarkMode(e.matches);
-                };
-                mediaQuery.addEventListener('change', handleChange);
-                return () => mediaQuery.removeEventListener('change', handleChange);
+            // Escuchar cambios de auth de Firebase (via window._firebaseRuta)
+            useEffect(() => {
+                const intervalo = setInterval(() => {
+                    if (window._firebaseRuta?.escucharAuth) {
+                        clearInterval(intervalo);
+                        window._firebaseRuta.escucharAuth((usuario) => {
+                            if (usuario) {
+                                setIsLoggedIn(true);
+                                setUserName(usuario.nombre);
+                                localStorage.setItem('isLoggedIn', 'true');
+                                localStorage.setItem('userName', usuario.nombre);
+                                document.getElementById('aviso-sin-sesion')?.classList.add('hidden');
+                            } else {
+                                setIsLoggedIn(false);
+                                setUserName('');
+                                localStorage.setItem('isLoggedIn', 'false');
+                                localStorage.removeItem('userName');
+                                document.getElementById('aviso-sin-sesion')?.classList.remove('hidden');
+                            }
+                        });
+                    }
+                }, 200);
+                return () => clearInterval(intervalo);
             }, []);
 
-            React.useEffect(() => {
+            useEffect(() => {
                 localStorage.setItem('darkMode', darkMode);
                 if (darkMode) {
                     document.documentElement.classList.add('dark');
@@ -334,11 +290,6 @@
                     document.body.classList.remove('bg-gray-900', 'text-white');
                 }
             }, [darkMode]);
-
-            const handleRegister = (name) => {
-                setUserName(name);
-                setIsLoggedIn(true);
-            };
 
             const toggleUserMenu = () => {
                 setMobileMenuOpen(!mobileMenuOpen);
@@ -361,7 +312,7 @@
                                     <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
                                     <a href="tools.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Herramientas</a>
                                     <a href="quiz.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Quiz</a>
-                                    <a href="route.html" className={`h-full flex items-center border-b-4 font-bold px-1 py-1 border-mint text-mint`}>Mi Ruta</a>
+                                    <a href="route.html" className="h-full flex items-center border-b-4 font-bold px-1 py-1 border-mint text-mint">Mi Ruta</a>
                                 </nav>
 
                                 <div className="flex items-center">
@@ -377,11 +328,11 @@
                                 <div className="p-3 space-y-1">
                                     <div className={`px-3 py-3 border-b mb-2 ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                                         <p className="text-sm font-bold">{isLoggedIn ? userName : 'Invitado'}</p>
-                                        <p className="text-xs opacity-70">{isLoggedIn ? 'Usuario Verificado' : 'Sin iniciar sesión'}</p>
+                                        <p className="text-xs opacity-70">{isLoggedIn ? 'Usuario Verificado ☁️' : 'Sin iniciar sesión'}</p>
                                     </div>
 
                                     {!isLoggedIn && (
-                                        <button onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <button onClick={() => { window.abrirModalAuth && window.abrirModalAuth(); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                                             <i className="fas fa-sign-in-alt w-6"></i> Iniciar Sesión
                                         </button>
                                     )}
@@ -391,12 +342,12 @@
                                     </a>
                                     <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                                         <div className="flex items-center">
-                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i> 
+                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i>
                                             Tema {darkMode ? 'Claro' : 'Oscuro'}
                                         </div>
                                     </button>
                                     {isLoggedIn && (
-                                        <button onClick={() => { localStorage.clear(); window.location.reload(); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-red-500 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                        <button onClick={() => { window.cerrarSesionFirebase && window.cerrarSesionFirebase(); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-red-500 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                                             <i className="fas fa-sign-out-alt w-6"></i> Cerrar Sesión
                                         </button>
                                     )}
@@ -409,13 +360,6 @@
                         <ProgressTracker />
                     </main>
 
-                    <RegisterModal 
-                        isOpen={showRegisterModal} 
-                        onClose={() => setShowRegisterModal(false)}
-                        onRegister={handleRegister}
-                        darkMode={darkMode}
-                    />
-
                     {/* Bottom Nav para APK/Mobile */}
                     <div className="md:hidden fixed bottom-0 left-0 w-full transition-colors duration-300 backdrop-blur-md border-t z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:bg-gray-900/95 dark:border-gray-800 bg-white/95 border-gray-200">
                         <div className="flex justify-around items-end h-16 pb-2 relative">
@@ -427,7 +371,7 @@
                                 <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
                                 <span className="text-[10px] font-semibold">Quiz</span>
                             </a>
-                            
+
                             <a href="index.html" className="flex flex-col items-center justify-center w-full relative z-10 bottom-3">
                                 <div className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 hover:text-mint dark:hover:text-mint-light w-14 h-14 rounded-full flex items-center justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-4 border-white dark:border-gray-900 transform hover:scale-105 smooth-transition">
                                     <i className="fas fa-home text-2xl"></i>
@@ -452,6 +396,92 @@
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MODAL DE AUTENTICACIÓN FIREBASE (igual que en index.html)
+         ════════════════════════════════════════════════════════════ -->
+    <div id="modal-auth" style="display:none" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm">
+      <div class="w-full max-w-sm bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
+
+        <!-- Cabecera -->
+        <div class="relative bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] p-6 text-white text-center">
+          <button onclick="window.cerrarModalAuth()" class="absolute top-4 right-4 text-white/60 hover:text-white transition-colors">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+          <div class="bg-white/15 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-chart-line text-2xl"></i>
+          </div>
+          <h2 class="text-xl font-black">Prosper<span class="text-mint">.</span></h2>
+          <p class="text-xs text-blue-100 mt-1">Inicia sesión para guardar tu progreso</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-100 dark:border-gray-700">
+          <button class="auth-tab activo flex-1 py-3 text-sm font-bold text-mint border-b-2 border-mint transition-all" data-target="panel-registro">Crear cuenta</button>
+          <button class="auth-tab flex-1 py-3 text-sm font-bold text-gray-400 dark:text-gray-500 border-b-2 border-transparent transition-all" data-target="panel-login">Iniciar sesión</button>
+        </div>
+
+        <!-- Panel REGISTRO -->
+        <div id="panel-registro" class="auth-panel p-6">
+          <form id="form-registro" class="space-y-3" novalidate>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-500 dark:text-gray-400">Nombre completo</label>
+              <input id="reg-nombre" type="text" required placeholder="Ej. María García" autocomplete="name"
+                class="w-full p-3 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-500 dark:text-gray-400">Correo electrónico</label>
+              <input id="reg-email" type="email" required placeholder="tu@correo.com" autocomplete="email"
+                class="w-full p-3 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-500 dark:text-gray-400">Contraseña (mín. 6 caracteres)</label>
+              <input id="reg-password" type="password" required placeholder="••••••••" autocomplete="new-password"
+                class="w-full p-3 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
+            </div>
+            <p id="msg-registro" class="auth-mensaje" style="display:none"></p>
+            <button type="submit" class="w-full bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-navy/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 text-sm">
+              <i class="fas fa-user-plus"></i> Crear cuenta
+            </button>
+          </form>
+        </div>
+
+        <!-- Panel LOGIN -->
+        <div id="panel-login" class="auth-panel p-6" style="display:none">
+          <form id="form-login" class="space-y-3" novalidate>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-500 dark:text-gray-400">Correo electrónico</label>
+              <input id="login-email" type="email" required placeholder="tu@correo.com" autocomplete="email"
+                class="w-full p-3 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-500 dark:text-gray-400">Contraseña</label>
+              <input id="login-password" type="password" required placeholder="••••••••" autocomplete="current-password"
+                class="w-full p-3 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
+            </div>
+            <p id="msg-login" class="auth-mensaje" style="display:none"></p>
+            <button type="submit" class="w-full bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-navy/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 text-sm">
+              <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Estilos del modal -->
+    <style>
+      .auth-tab.activo   { color: #10B981; border-bottom-color: #10B981; }
+      .auth-mensaje      { padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-top: 4px; }
+      .auth-mensaje.error { background: #FEE2E2; color: #DC2626; }
+      .auth-mensaje.exito { background: #D1FAE5; color: #065F46; }
+    </style>
+
+    <!-- Firebase Auth (modal) -->
+    <script type="module" src="auth-ui.js"></script>
+    <!-- Firebase Firestore (hábitos) -->
+    <script type="module" src="route-firebase.js"></script>
+
 </body>
 
 </html>
