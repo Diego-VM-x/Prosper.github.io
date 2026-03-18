@@ -102,51 +102,55 @@
 
             return (
                 <div className="animate-fade-in relative">
-                    <div className="flex justify-between items-start mb-5">
-                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Analiza cuánto podrías ahorrar si dejas de comprar ese "capricho" frecuente.</p>
-                        <a href="aprende.html?article=7" className="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender más sobre gastos hormiga">
-                            <i className="fas fa-info px-1"></i>
-                        </a>
-                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-5 italic">Analiza cuánto podrías ahorrar si dejas de comprar ese "capricho" frecuente.</p>
                     <div className="space-y-4 mb-5">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Producto o Hábito</label>
-                            <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Ej. Café, Taxis..." className="w-full px-4 py-3 bg-gray-50 text-navy font-semibold rounded-xl focus:bg-white focus:border-mint focus:ring-4 focus:ring-mint-light outline-none border-2 border-transparent smooth-transition text-sm" />
-                        </div>
+                        <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="¿En qué gastas? (Ej. Café)" className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-mint rounded-xl outline-none font-semibold dark:text-white transition-all" />
                         <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Costo ($)</label>
-                                <input type="number" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="0.00" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-mint focus:ring-4 focus:ring-mint-light outline-none border-2 border-transparent smooth-transition" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Por semana</label>
-                                <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="w-full px-4 py-3 bg-gray-50 text-navy font-bold text-sm rounded-xl focus:bg-white focus:border-mint focus:ring-4 focus:ring-mint-light outline-none border-2 border-transparent smooth-transition cursor-pointer">
-                                    <option value="1">1 vez</option>
-                                    <option value="2">2 veces</option>
-                                    <option value="3">3 veces</option>
-                                    <option value="5">5 veces</option>
-                                    <option value="7">A diario</option>
-                                </select>
-                            </div>
+                            <input type="number" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="Costo ($)" className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none font-bold dark:text-white" />
+                            <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none font-bold dark:text-white">
+                                <option value="1">1 vez/semana</option>
+                                <option value="3">3 veces/semana</option>
+                                <option value="7">A diario</option>
+                            </select>
                         </div>
                     </div>
-                    <button onClick={handleCalculate} className="w-full bg-navy hover:bg-blue-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Calcular Ahorro</button>
+                    <button onClick={handleCalculate} className="w-full bg-navy text-white font-bold py-3.5 rounded-xl hover:bg-blue-900 transition-all">Calcular Ahorro</button>
                     {result && (
-                        <div className="mt-5 p-5 bg-mint-light/40 rounded-xl border border-emerald-200 animate-fade-in">
-                            <h3 className="text-center text-emerald-800 font-bold text-sm mb-4">Si evitas <span className="text-navy bg-mint-light px-2 py-0.5 rounded font-black">"{result.name}"</span>, podrías ahorrar:</h3>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-emerald-100">
-                                    <span className="text-[11px] font-bold text-gray-600 uppercase">En 15 días</span>
-                                    <span className="font-extrabold text-navy">${result.days15.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                </div>
-                                <div className="flex justify-between items-center bg-white p-3 rounded-lg border-l-4 border-l-emerald-400">
-                                    <span className="text-[11px] font-bold text-emerald-600 uppercase">En 1 mes</span>
-                                    <span className="font-black text-mint-hover text-lg">${result.month.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                </div>
-                                <div className="flex justify-between items-center bg-mint p-4 rounded-xl shadow-md text-white mt-3">
-                                    <span className="text-xs font-bold uppercase">En 1 año</span>
-                                    <span className="font-black text-2xl">${result.year.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                </div>
+                        <div className="mt-5 p-5 bg-mint-light/40 dark:bg-mint/10 rounded-xl border border-mint/20">
+                            <div className="flex justify-between items-center mb-2"><span className="text-xs font-bold uppercase dark:text-gray-300">En 1 mes</span><span className="font-black text-navy dark:text-mint-light text-lg">${result.month.toFixed(2)}</span></div>
+                            <div className="flex justify-between items-center"><span className="text-xs font-bold uppercase dark:text-gray-300">En 1 año</span><span className="font-black text-mint-hover dark:text-mint text-2xl">${result.year.toFixed(2)}</span></div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        function MonthlyBudget() {
+            const [income, setIncome] = useState('');
+            const [result, setResult] = useState(null);
+            const calc = () => {
+                let inc = parseFloat(income);
+                if (inc > 0) setResult({ needs: inc * 0.5, wants: inc * 0.3, savings: inc * 0.2 });
+                else setResult(null);
+            };
+            return (
+                <div className="animate-fade-in">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-5 italic">Divide tus ingresos con la regla 50/30/20.</p>
+                    <input type="number" value={income} onChange={(e) => setIncome(e.target.value)} placeholder="Ingreso Mensual ($)" className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-purple-500 rounded-xl outline-none font-bold dark:text-white mb-5 transition-all" />
+                    <button onClick={calc} className="w-full bg-purple-600 text-white font-bold py-3.5 rounded-xl hover:bg-purple-700 transition-all">Distribuir Presupuesto</button>
+                    {result && (
+                        <div className="mt-5 space-y-3">
+                            <div className="flex justify-between p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl dark:border dark:border-indigo-800">
+                                <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-400">50% Necesidades</span>
+                                <span className="font-black dark:text-white">${result.needs.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between p-3 bg-pink-50 dark:bg-pink-900/20 rounded-xl dark:border dark:border-pink-800">
+                                <span className="text-sm font-semibold text-pink-700 dark:text-pink-400">30% Deseos</span>
+                                <span className="font-black dark:text-white">${result.wants.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between p-3 bg-mint-light dark:bg-mint/10 rounded-xl font-bold border border-mint/20">
+                                <span className="text-sm text-mint-hover dark:text-mint">20% Ahorro</span>
+                                <span className="font-black text-mint-hover dark:text-mint">${result.savings.toFixed(2)}</span>
                             </div>
                         </div>
                     )}
@@ -157,120 +161,24 @@
         function ROICalculator() {
             const [initial, setInitial] = useState('');
             const [final, setFinal] = useState('');
-            const [income, setIncome] = useState('');
-            const [expenses, setExpenses] = useState('');
             const [result, setResult] = useState(null);
-
             const calc = () => {
-                let i = parseFloat(initial) || 0;
-                let f = parseFloat(final) || 0;
-                let inc = parseFloat(income) || 0;
-                let exp = parseFloat(expenses) || 0;
-
-                const totalCost = i + exp;
-                if (totalCost > 0) {
-                    const totalReturn = f + inc;
-                    const netProfit = totalReturn - totalCost;
-                    const roi = (netProfit / totalCost) * 100;
-                    setResult({ roi: roi, profit: netProfit });
-                } else setResult(null);
-            };
-
-            return (
-                <div className="animate-fade-in relative">
-                    <div className="flex justify-between items-start mb-5">
-                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Calcula el retorno real con factores como remodelaciones, mantenimiento o ganancias por alquiler.</p>
-                        <a href="aprende.html?article=8" className="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre el Retorno de Inversión (ROI)">
-                            <i className="fas fa-info px-1"></i>
-                        </a>
-                    </div>
-                    <div className="space-y-4 mb-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Inversión Inicial ($)</label>
-                                <input type="number" value={initial} onChange={(e) => setInitial(e.target.value)} placeholder="Ej. 100000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-blue-500 outline-none border-2 border-transparent smooth-transition appearance-none" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Valor de Venta ($)</label>
-                                <input type="number" value={final} onChange={(e) => setFinal(e.target.value)} placeholder="Ej. 120000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-blue-500 outline-none border-2 border-transparent smooth-transition appearance-none" />
-                            </div>
-                        </div>
-
-                        <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                            <span className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-3 block"><i className="fas fa-plus-circle mr-1"></i> Factores Extras (Opcionales)</span>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Ingresos <span className="lowercase text-gray-500 font-normal">(alquiler, dividendos)</span></label>
-                                    <div className="relative">
-                                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">$</span>
-                                        <input type="number" value={income} onChange={(e) => setIncome(e.target.value)} placeholder="0.00" className="w-full pl-7 pr-4 py-3 bg-white text-navy font-bold rounded-xl focus:border-blue-500 outline-none border border-gray-200 smooth-transition" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Gastos <span className="lowercase text-gray-500 font-normal">(mantenimiento, seguros)</span></label>
-                                    <div className="relative">
-                                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">$</span>
-                                        <input type="number" value={expenses} onChange={(e) => setExpenses(e.target.value)} placeholder="0.00" className="w-full pl-7 pr-4 py-3 bg-white text-navy font-bold rounded-xl focus:border-blue-500 outline-none border border-gray-200 smooth-transition" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <button onClick={calc} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition"><i className="fas fa-calculator mr-2"></i> Calcular ROI Completo</button>
-                    {result && (
-                        <div className={`mt-5 p-5 rounded-xl border animate-fade-in ${result.profit >= 0 ? 'bg-mint-light/40 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
-                            <div className="text-center">
-                                <span className="text-sm font-bold block mb-1">Tu Retorno de Inversión (ROI) es de:</span>
-                                <span className="text-4xl font-black">{result.roi.toFixed(2)}%</span>
-                                <div className={`mt-3 pt-3 border-t flex justify-center items-center space-x-2 ${result.profit >= 0 ? 'border-emerald-200/50' : 'border-red-200/50'}`}>
-                                    <span className="text-xs font-bold uppercase">{result.profit >= 0 ? 'Ganancia Neta:' : 'Pérdida Neta:'}</span>
-                                    <span className="text-lg font-black">${result.profit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )
-        }
-
-        function MonthlyBudget() {
-            const [income, setIncome] = useState('');
-            const [result, setResult] = useState(null);
-
-            const calc = () => {
-                let inc = parseFloat(income);
-                if (inc > 0) setResult({ needs: inc * 0.5, wants: inc * 0.3, savings: inc * 0.2 });
+                let i = parseFloat(initial); let f = parseFloat(final);
+                if (i > 0) setResult(((f - i) / i) * 100);
                 else setResult(null);
             };
-
             return (
-                <div className="animate-fade-in relative">
-                    <div className="flex justify-between items-start mb-5">
-                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Divide tu ingreso mensual usando la regla 50/30/20 (Necesidades/Deseos/Ahorro).</p>
-                        <a href="aprende.html?article=1" className="text-purple-500 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre la Regla 50/30/20">
-                            <i className="fas fa-info px-1"></i>
-                        </a>
+                <div className="animate-fade-in">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-5 italic">Calcula el rendimiento porcentual de cualquier inversión.</p>
+                    <div className="space-y-4 mb-5">
+                        <input type="number" value={initial} onChange={(e) => setInitial(e.target.value)} placeholder="Inversión Inicial ($)" className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-blue-500 rounded-xl outline-none font-bold dark:text-white transition-all" />
+                        <input type="number" value={final} onChange={(e) => setFinal(e.target.value)} placeholder="Valor Final ($)" className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-blue-500 rounded-xl outline-none font-bold dark:text-white transition-all" />
                     </div>
-                    <div className="mb-5">
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ingreso Mensual ($)</label>
-                        <input type="number" value={income} onChange={(e) => setIncome(e.target.value)} placeholder="Ej. 3000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-purple-500 outline-none border-2 border-transparent smooth-transition" />
-                    </div>
-                    <button onClick={calc} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Distribuir Dinero</button>
-                    {result && (
-                        <div className="mt-5 space-y-3 animate-fade-in">
-                            <div className="flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-100">
-                                <div><span className="block font-extrabold text-blue-900">50% Necesidades</span><span className="text-[10px] text-blue-500 font-bold uppercase">Casa, comida, deudas</span></div>
-                                <span className="font-black text-blue-700 text-xl">${result.needs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                            </div>
-                            <div className="flex justify-between items-center bg-pink-50 p-4 rounded-xl border border-pink-100">
-                                <div><span className="block font-extrabold text-pink-900">30% Deseos</span><span className="text-[10px] text-pink-500 font-bold uppercase">Cine, salidas, antojos</span></div>
-                                <span className="font-black text-pink-700 text-xl">${result.wants.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                            </div>
-                            <div className="flex justify-between items-center bg-mint-light/50 p-4 rounded-xl border border-mint-light">
-                                <div><span className="block font-extrabold text-mint-hover">20% Ahorro</span><span className="text-[10px] text-mint uppercase font-bold">Inversión, Fondo</span></div>
-                                <span className="font-black text-mint-hover text-xl">${result.savings.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                            </div>
+                    <button onClick={calc} className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all">Calcular Retorno</button>
+                    {result !== null && (
+                        <div className="mt-5 p-5 bg-blue-50 dark:bg-blue-900/20 text-center rounded-2xl border-2 border-blue-100 dark:border-blue-800">
+                            <span className="text-xs font-bold uppercase text-blue-600 dark:text-blue-400 block mb-1">ROI obtenido</span>
+                            <div className="text-4xl font-black text-blue-700 dark:text-blue-400">{result.toFixed(2)}%</div>
                         </div>
                     )}
                 </div>
@@ -278,48 +186,24 @@
         }
 
         function CompoundInterest() {
-            const [principal, setPrincipal] = useState('');
-            const [rate, setRate] = useState('');
-            const [years, setYears] = useState('');
-            const [result, setResult] = useState(null);
-
-            const calc = () => {
-                let p = parseFloat(principal); let r = parseFloat(rate) / 100; let y = parseFloat(years);
-                if (p > 0 && r > 0 && y > 0) setResult({ total: p * Math.pow(1 + r, y), profit: (p * Math.pow(1 + r, y)) - p });
-                else setResult(null);
-            };
-
+            const [p, setP] = useState('');
+            const [r, setR] = useState('');
+            const [t, setT] = useState('');
+            const [res, setRes] = useState(null);
+            const calc = () => { if(p&&r&&t) setRes(p * Math.pow(1 + (r/100), t)); };
             return (
-                <div className="animate-fade-in relative">
-                    <div className="flex justify-between items-start mb-5">
-                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Mira cómo crece tu dinero a lo largo de los años gracias al interés compuesto.</p>
-                        <a href="aprende.html?article=4" className="text-emerald-500 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre el Interés Compuesto">
-                            <i className="fas fa-info px-1"></i>
-                        </a>
+                <div className="animate-fade-in space-y-4">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm italic mb-2">Mira cómo crece tu capital con el tiempo.</p>
+                    <input type="number" value={p} onChange={(e)=>setP(e.target.value)} placeholder="Capital Inicial ($)" className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <input type="number" value={r} onChange={(e)=>setR(e.target.value)} placeholder="% Anual" className="p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
+                        <input type="number" value={t} onChange={(e)=>setT(e.target.value)} placeholder="Años" className="p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-emerald-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
                     </div>
-                    <div className="space-y-4 mb-5">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Capital Inicial ($)</label>
-                            <input type="number" value={principal} onChange={(e) => setPrincipal(e.target.value)} placeholder="Ej. 1000" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-emerald-500 outline-none border-2 border-transparent smooth-transition" />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tasa Anual (%)</label>
-                                <input type="number" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="Ej. 8" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-emerald-500 outline-none border-2 border-transparent smooth-transition" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Años</label>
-                                <input type="number" value={years} onChange={(e) => setYears(e.target.value)} placeholder="Ej. 5" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-emerald-500 outline-none border-2 border-transparent smooth-transition" />
-                            </div>
-                        </div>
-                    </div>
-                    <button onClick={calc} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Proyectar Crecimiento</button>
-                    {result && (
-                        <div className="mt-5 p-5 bg-navy text-white rounded-xl shadow-lg border border-blue-900 animate-fade-in text-center relative overflow-hidden">
-                            <i className="fas fa-chart-line absolute -bottom-5 -right-5 text-8xl opacity-10"></i>
-                            <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">Monto Final</span>
-                            <div className="font-black text-4xl text-mint my-2">${result.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            <span className="text-sm font-semibold text-gray-300 block">Ganancia Pura: <span className="text-mint-light">${result.profit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></span>
+                    <button onClick={calc} className="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl hover:bg-emerald-700 transition-all">Proyectar Crecimiento</button>
+                    {res && (
+                        <div className="p-6 bg-navy dark:bg-gray-800 text-white text-center rounded-3xl shadow-xl border dark:border-gray-700">
+                            <span className="text-[10px] uppercase font-black tracking-widest block mb-1 opacity-70">Capital Estimado Final</span>
+                            <div className="text-4xl font-black text-mint">${res.toLocaleString()}</div>
                         </div>
                     )}
                 </div>
@@ -328,45 +212,23 @@
 
         function EmergencyFund() {
             const [expenses, setExpenses] = useState('');
-            const [months, setMonths] = useState('3');
+            const [months, setMonths] = useState('6');
             const [result, setResult] = useState(null);
-
-            const calc = () => {
-                let exp = parseFloat(expenses); let m = parseFloat(months);
-                if (exp > 0 && m > 0) setResult(exp * m);
-                else setResult(null);
-            };
-
+            const calc = () => { if(expenses) setResult(expenses * months); };
             return (
-                <div className="animate-fade-in relative">
-                    <div className="flex justify-between items-start mb-5">
-                        <p className="text-gray-600 text-sm leading-relaxed pr-4">Calcula cuánto deberías ahorrar para estar protegido ante pérdidas de empleo o urgencias.</p>
-                        <a href="aprende.html?article=2" className="text-yellow-500 hover:text-yellow-700 bg-yellow-50 hover:bg-yellow-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre el Fondo de Emergencia">
-                            <i className="fas fa-info px-1"></i>
-                        </a>
-                    </div>
-                    <div className="space-y-4 mb-5">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tus Gastos Mensuales ($)</label>
-                            <input type="number" value={expenses} onChange={(e) => setExpenses(e.target.value)} placeholder="Ej. 800" className="w-full px-4 py-3 bg-gray-50 text-navy font-bold rounded-xl focus:bg-white focus:border-yellow-500 outline-none border-2 border-transparent smooth-transition" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Meses que deseas cubrir</label>
-                            <select value={months} onChange={(e) => setMonths(e.target.value)} className="w-full px-4 py-3 bg-gray-50 text-navy font-bold text-sm rounded-xl focus:bg-white focus:border-yellow-500 outline-none border-2 border-transparent smooth-transition cursor-pointer">
-                                <option value="3">3 meses (Lo mínimo requerido)</option>
-                                <option value="6">6 meses (Para mayor paz mental)</option>
-                                <option value="12">12 meses (Máxima seguridad)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button onClick={calc} className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Calcular mi Fondo</button>
+                <div className="animate-fade-in space-y-4">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm italic mb-2">Calcula cuánto necesitas para estar seguro ante imprevistos.</p>
+                    <input type="number" value={expenses} onChange={(e)=>setExpenses(e.target.value)} placeholder="Gastos Mensuales ($)" className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-yellow-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
+                    <select value={months} onChange={(e)=>setMonths(e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl font-bold outline-none dark:text-white">
+                        <option value="3">3 Meses (Mínimo)</option>
+                        <option value="6">6 Meses (Ideal)</option>
+                        <option value="12">12 Meses (Seguridad Total)</option>
+                    </select>
+                    <button onClick={calc} className="w-full bg-yellow-500 text-white font-bold py-4 rounded-2xl hover:bg-yellow-600 transition-all">Calcular Meta de Ahorro</button>
                     {result && (
-                        <div className="mt-5 p-5 bg-yellow-50 text-yellow-900 rounded-xl border border-yellow-200 animate-fade-in text-center flex items-center justify-between">
-                            <div className="text-left">
-                                <span className="text-xs uppercase font-extrabold text-yellow-600 tracking-wider">Tu Meta Ideal</span>
-                                <div className="font-black text-2xl">${result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            </div>
-                            <div className="bg-yellow-200 w-12 h-12 rounded-full flex items-center justify-center text-yellow-600 text-xl"><i className="fas fa-shield-alt"></i></div>
+                        <div className="p-6 bg-yellow-50 dark:bg-yellow-900/10 text-center rounded-3xl border-2 border-yellow-200 dark:border-yellow-900/30">
+                            <span className="text-[10px] uppercase font-black text-yellow-800 dark:text-yellow-400 block mb-1">Tu fondo debe ser de</span>
+                            <div className="text-4xl font-black text-yellow-800 dark:text-yellow-500">${result.toLocaleString()}</div>
                         </div>
                     )}
                 </div>
@@ -377,36 +239,17 @@
             const [assets, setAssets] = useState('');
             const [liabilities, setLiabilities] = useState('');
             const [result, setResult] = useState(null);
-
-            const calc = () => {
-                let a = parseFloat(assets) || 0; let l = parseFloat(liabilities) || 0;
-                setResult(a - l);
-            };
-
+            const calc = () => { setResult((parseFloat(assets)||0) - (parseFloat(liabilities)||0)); };
             return (
-                <div className="animate-fade-in relative">
-                    <div className="flex justify-between items-start mb-5">
-                        <p className="text-gray-600 text-sm leading-relaxed pr-4">El Patrimonio Neto mide tu riqueza real (Lo que Tienes menos lo que Debes).</p>
-                        <a href="aprende.html?article=9" className="text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 w-8 h-8 rounded-full flex items-center justify-center shrink-0 smooth-transition" title="Aprender sobre Patrimonio Neto">
-                            <i className="fas fa-info px-1"></i>
-                        </a>
-                    </div>
-                    <div className="space-y-4 mb-5">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Valor de tus Activos (Ahorros, Inversiones, Autos) ($)</label>
-                            <input type="number" value={assets} onChange={(e) => setAssets(e.target.value)} placeholder="0.00" className="w-full px-4 py-3 bg-gray-50 text-emerald-700 font-bold rounded-xl focus:bg-white focus:border-indigo-500 outline-none border-2 border-transparent smooth-transition" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total de tus Deudas (Tarjetas, Préstamos) ($)</label>
-                            <input type="number" value={liabilities} onChange={(e) => setLiabilities(e.target.value)} placeholder="0.00" className="w-full px-4 py-3 bg-gray-50 text-red-600 font-bold rounded-xl focus:bg-white focus:border-indigo-500 outline-none border-2 border-transparent smooth-transition" />
-                        </div>
-                    </div>
-                    <button onClick={calc} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transform active:scale-95 smooth-transition">Calcular Riqueza Real</button>
+                <div className="animate-fade-in space-y-4">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm italic mb-2">La métrica definitiva de tu salud financiera actual (Activos - Deudas).</p>
+                    <input type="number" value={assets} onChange={(e)=>setAssets(e.target.value)} placeholder="Total Activos (Lo que tienes) ($)" className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-navy rounded-2xl font-bold outline-none dark:text-white transition-all" />
+                    <input type="number" value={liabilities} onChange={(e)=>setLiabilities(e.target.value)} placeholder="Total Deudas (Lo que debes) ($)" className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-red-500 rounded-2xl font-bold outline-none dark:text-white transition-all" />
+                    <button onClick={calc} className="w-full bg-navy text-white font-bold py-4 rounded-2xl hover:bg-blue-900 transition-all">Calcular Patrimonio</button>
                     {result !== null && (
-                        <div className="mt-5 p-5 bg-gray-900 text-white rounded-xl shadow-lg border border-gray-800 animate-fade-in text-center">
-                            <span className="text-xs uppercase font-extrabold text-indigo-300 tracking-wider">Tu Patrimonio Neto es</span>
-                            <div className={`font-black text-4xl mt-1 ${result < 0 ? 'text-red-400' : 'text-emerald-400'}`}>${result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            {result < 0 && <span className="block text-xs text-red-300 mt-2">Tienes deudas mayores a tus activos. ¡Es momento de organizarte!</span>}
+                        <div className={`p-6 rounded-3xl text-center shadow-xl border ${result >= 0 ? 'bg-mint/10 border-mint/20' : 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/20'}`}>
+                            <span className={`text-[10px] uppercase font-black block mb-1 ${result >= 0 ? 'text-mint' : 'text-red-600 dark:text-red-400'}`}>Tu Patrimonio Neto Actual</span>
+                            <div className={`text-4xl font-black ${result >= 0 ? 'text-mint-hover dark:text-mint' : 'text-red-700 dark:text-red-500'}`}>${result.toLocaleString()}</div>
                         </div>
                     )}
                 </div>
@@ -415,56 +258,58 @@
 
         function ToolsDashboard() {
             const tools = [
-                { id: 'hormiga', name: 'Gastos Hormiga', icon: 'fa-search-dollar', color: 'text-mint', titleBg: 'bg-mint-light/30 text-mint', bg: 'bg-mint-light', component: <GastosHormiga /> },
-                { id: 'budget', name: 'Presupuesto 50/30/20', icon: 'fa-chart-pie', color: 'text-purple-600', titleBg: 'bg-purple-100 text-purple-700', bg: 'bg-purple-100', component: <MonthlyBudget /> },
-                { id: 'roi', name: 'Retorno Inversión (ROI)', icon: 'fa-chart-line', color: 'text-blue-600', titleBg: 'bg-blue-100 text-blue-700', bg: 'bg-blue-100', component: <ROICalculator /> },
-                { id: 'compound', name: 'Interés Compuesto', icon: 'fa-seedling', color: 'text-emerald-600', titleBg: 'bg-emerald-100 text-emerald-700', bg: 'bg-emerald-100', component: <CompoundInterest /> },
-                { id: 'emergency', name: 'Fondo Emergencia', icon: 'fa-piggy-bank', color: 'text-yellow-600', titleBg: 'bg-yellow-100 text-yellow-700', bg: 'bg-yellow-100', component: <EmergencyFund /> },
-                { id: 'networth', name: 'Patrimonio Neto', icon: 'fa-scale-balanced', color: 'text-indigo-600', titleBg: 'bg-indigo-100 text-indigo-700', bg: 'bg-indigo-100', component: <NetWorth /> },
+                { id: 'hormiga', name: 'Gastos Hormiga', icon: 'fa-search-dollar', color: 'text-purple-500', component: <GastosHormiga /> },
+                { id: 'budget', name: 'Presupuesto', icon: 'fa-chart-pie', color: 'text-indigo-500', component: <MonthlyBudget /> },
+                { id: 'roi', name: 'Retorno ROI', icon: 'fa-chart-line', color: 'text-blue-500', component: <ROICalculator /> },
+                { id: 'compound', name: 'Interés Compuesto', icon: 'fa-seedling', color: 'text-emerald-500', component: <CompoundInterest /> },
+                { id: 'emergency', name: 'Fondo Emergencia', icon: 'fa-piggy-bank', color: 'text-yellow-600', component: <EmergencyFund /> },
+                { id: 'networth', name: 'Patrimonio Neto', icon: 'fa-balance-scale', color: 'text-navy', component: <NetWorth /> },
             ];
 
-            const [activeToolId, setActiveToolId] = useState('hormiga');
-            const activeTool = tools.find(t => t.id === activeToolId);
-
-            React.useEffect(() => {
-                const params = new URLSearchParams(window.location.search);
-                const toolParam = params.get('tool');
-                if (toolParam && tools.some(t => t.id === toolParam)) {
-                    setActiveToolId(toolParam);
-                }
-            }, []);
+            const [activeId, setActiveId] = useState('hormiga');
+            const activeTool = tools.find(t => t.id === activeId);
 
             return (
-                <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-6">
-                    {/* Panel de Selección */}
-                    <div className="w-full md:w-1/3 flex flex-row md:flex-col overflow-x-auto md:overflow-visible gap-3 md:gap-2 pb-2 md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                        {tools.map(tool => (
-                            <button
-                                key={tool.id}
-                                onClick={() => setActiveToolId(tool.id)}
-                                className={`snap-start shrink-0 flex items-center p-3 md:p-4 rounded-2xl smooth-transition border text-left cursor-pointer w-[200px] md:w-full focus:outline-none transition-colors ${activeToolId === tool.id ? `bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-md transform md:scale-105` : `bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700 opacity-60 hover:opacity-100`}`}
-                            >
-                                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${tool.bg} flex items-center justify-center shrink-0`}>
-                                    <i className={`fas ${tool.icon} ${tool.color} text-lg md:text-xl`}></i>
-                                </div>
-                                <span className={`ml-3 font-extrabold text-sm leading-tight transition-colors ${activeToolId === tool.id ? 'text-navy dark:text-white' : 'text-gray-600 dark:text-gray-500'}`}>{tool.name}</span>
-                            </button>
-                        ))}
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h1 className="text-3xl md:text-4xl font-black text-navy dark:text-white uppercase tracking-tighter mb-4">Calculadoras de Precisión<span className="text-mint">.</span></h1>
+                        <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto font-medium">Herramientas diseñadas para darte claridad absoluta sobre tus finanzas personales en segundos.</p>
                     </div>
 
-                    {/* Contenedor de la Herramienta */}
-                    <div className="w-full md:w-2/3 bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative min-h-[400px] transition-colors duration-300">
-                        {activeTool && (
-                            <div className="animate-fade-in">
-                                <div className="flex items-center mb-6">
-                                    <div className={`${activeTool.titleBg} px-3 py-1.5 rounded-lg flex items-center shadow-sm`}>
-                                        <i className={`fas ${activeTool.icon} mr-2`}></i>
-                                        <h2 className="text-sm font-extrabold tracking-tight">{activeTool.name}</h2>
+                    <div className="flex flex-col md:flex-row gap-8">
+                        {/* Navegación Lateral */}
+                        <div className="w-full md:w-80 space-y-3">
+                            {tools.map(tool => (
+                                <button key={tool.id} onClick={() => setActiveId(tool.id)} className={`w-full flex items-center p-4 rounded-2xl transition-all border-2 ${activeId === tool.id ? 'bg-white dark:bg-gray-800 border-mint shadow-2xl scale-[1.03] z-10' : 'bg-white/50 dark:bg-gray-900/50 border-transparent opacity-60 hover:opacity-100'}`}>
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-50 dark:bg-gray-900 shadow-sm border dark:border-gray-700">
+                                        <i className={`fas ${tool.icon} ${tool.color} text-base`}></i>
+                                    </div>
+                                    <span className="ml-4 font-black text-[11px] text-navy dark:text-white uppercase tracking-tighter">{tool.name}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Visor de Herramienta */}
+                        <div className="flex-grow bg-white dark:bg-gray-800 p-8 md:p-12 rounded-[3.5rem] shadow-2xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
+                                <i className={`fas ${activeTool.icon} text-[15rem]`}></i>
+                            </div>
+                            
+                            <div className="relative z-10">
+                                <div className="mb-10 flex items-center gap-5">
+                                    <div className="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-2xl flex items-center justify-center shadow-inner border dark:border-gray-800">
+                                        <i className={`fas ${activeTool.icon} ${activeTool.color} text-3xl`}></i>
+                                    </div>
+                                    <div>
+                                        <h2 className="text-2xl font-black text-navy dark:text-white uppercase tracking-tighter leading-none mb-1">{activeTool.name}</h2>
+                                        <span className="text-[10px] font-black text-mint uppercase tracking-widest">Herramienta Activa</span>
                                     </div>
                                 </div>
-                                {activeTool.component}
+                                <div className="max-w-xl">
+                                    {activeTool.component}
+                                </div>
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             );
@@ -643,7 +488,7 @@
                                     <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
                                     <a href="tools.html" className="h-full flex items-center text-mint border-b-4 border-mint font-bold px-1 py-1">Herramientas</a>
                                     <a href="quiz.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Quiz</a>
-                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mi Ruta</a>
+                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mis Retos</a>
                                 </nav>
 
                                 <div className="flex items-center">
@@ -669,7 +514,7 @@
                                     )}
 
                                     <a href="acerca.html" onClick={() => setMobileMenuOpen(false)} className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Acerca de
+                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Aprende a usar la app
                                     </a>
                                     <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                                         <div className="flex items-center">
@@ -723,7 +568,7 @@
                             </a>
                             <a href="route.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
                                 <i className="fas fa-route text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Mi Ruta</span>
+                                <span className="text-[10px] font-semibold">Mis Retos</span>
                             </a>
                         </div>
                     </div>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Ruta - Prosper</title>
+    <title>Mis Retos - Prosper</title>
 
     <!-- Preconnect a recursos externos -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
@@ -81,30 +81,56 @@
         // ── Bandera para evitar guardar antes de que Firestore cargue ──────────
         let habitosCargadosDesdeFirestore = false;
 
+        // Función para generar links de Google Calendar (ISO YYYYMMDDTHHMMSSZ)
+        function generarLinkCalendario(titulo, descripcion, horasDesdeAhora) {
+            const pad = (n) => (n < 10 ? '0' + n : n);
+            const toISO = (d) => {
+                return (
+                    d.getUTCFullYear() +
+                    pad(d.getUTCMonth() + 1) +
+                    pad(d.getUTCDate()) +
+                    'T' +
+                    pad(d.getUTCHours()) +
+                    pad(d.getUTCMinutes()) +
+                    pad(d.getUTCSeconds()) +
+                    'Z'
+                );
+            };
+
+            const start = new Date();
+            start.setHours(start.getHours() + horasDesdeAhora);
+            const end = new Date(start.getTime() + 60 * 60 * 1000); // 1 hora de duración
+
+            return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&details=${encodeURIComponent(descripcion)}&dates=${toISO(start)}/${toISO(end)}`;
+        }
+
         function ProgressTracker() {
             const [habits, setHabits] = useState(() => {
                 const saved = localStorage.getItem('user_habits');
                 return saved ? JSON.parse(saved) : DEFAULT_HABITS;
             });
             const [newTaskText, setNewTaskText] = useState("");
+            const [selectedIcon, setSelectedIcon] = useState("fa-star");
             const [guardando, setGuardando] = useState(false);
             const [statusMsg, setStatusMsg] = useState("");
-            const [cargando, setCargando] = useState(true); // ← Nuevo: estado de carga
+            const [cargando, setCargando] = useState(true); 
+
+            const AVAILABLE_ICONS = [
+                "fa-star", "fa-piggy-bank", "fa-credit-card", "fa-chart-pie", 
+                "fa-arrow-trend-up", "fa-wallet", "fa-coins", "fa-vault", 
+                "fa-briefcase", "fa-house", "fa-car", "fa-plane"
+            ];
+
             const guardarTimeout = useRef(null);
 
             // ── Inicializar Firebase: esperar Auth y cargar hábitos ──────────────
-            // onAuthStateChanged garantiza que esperamos a que Firebase restaure
-            // la sesión completamente antes de intentar leer Firestore.
             useEffect(() => {
                 let unsubscribe = null;
-
                 const esperar = setInterval(() => {
                     if (window._firebaseRuta?.inicializar) {
                         clearInterval(esperar);
-
                         unsubscribe = window._firebaseRuta.inicializar({
                             onSesion: (usuario) => {
-                                // Auth resuelto. Si no hay usuario, reseteamos a default inmediatamente.
                                 if (!usuario) {
                                     setHabits(DEFAULT_HABITS);
                                     localStorage.removeItem('user_habits');
@@ -113,36 +139,29 @@
                             },
                             onHabitosListos: (habitosFirestore) => {
                                 if (habitosFirestore !== null) {
-                                    // ✅ Hemos cargado datos reales de este usuario
                                     setHabits(habitosFirestore);
                                     localStorage.setItem('user_habits', JSON.stringify(habitosFirestore));
                                     habitosCargadosDesdeFirestore = true;
                                 } else {
-                                    // ✖️ Usuario logueado pero sin datos en la nube: usar default
                                     setHabits(DEFAULT_HABITS);
                                     localStorage.removeItem('user_habits');
-                                    habitosCargadosDesdeFirestore = true; // permitimos guardar desde ahora
+                                    habitosCargadosDesdeFirestore = true;
                                 }
                                 setCargando(false);
                             }
                         });
                     }
                 }, 150);
-
                 return () => {
                     clearInterval(esperar);
                     if (unsubscribe) unsubscribe();
                 };
             }, []);
 
-
             // ── Guardar en localStorage + Firestore con debounce ─────────────────
             useEffect(() => {
                 localStorage.setItem('user_habits', JSON.stringify(habits));
-
                 if (!habitosCargadosDesdeFirestore || !window._firebaseRuta) return;
-
-                // Debounce: esperar 800ms sin cambios antes de guardar en Firestore
                 clearTimeout(guardarTimeout.current);
                 guardarTimeout.current = setTimeout(async () => {
                     setGuardando(true);
@@ -153,22 +172,8 @@
                 }, 800);
             }, [habits]);
 
-
             const toggleHabit = (id) => {
                 setHabits(habits.map(h => h.id === id ? { ...h, completed: !h.completed } : h));
-            };
-
-            const addHabit = (e) => {
-                e.preventDefault();
-                if (!newTaskText.trim()) return;
-                const newHabit = {
-                    id: Date.now(),
-                    text: newTaskText,
-                    icon: "fa-star",
-                    completed: false
-                };
-                setHabits([...habits, newHabit]);
-                setNewTaskText("");
             };
 
             const removeHabit = (id) => {
@@ -178,14 +183,27 @@
             const completedCount = habits.filter(h => h.completed).length;
             const progressPercentage = habits.length > 0 ? Math.round((completedCount / habits.length) * 100) : 0;
 
+            const addHabit = (e) => {
+                e.preventDefault();
+                if (!newTaskText.trim()) return;
+                const newHabit = {
+                    id: Date.now(),
+                    text: newTaskText,
+                    icon: selectedIcon,
+                    completed: false
+                };
+                setHabits([...habits, newHabit]);
+                setNewTaskText("");
+                setSelectedIcon("fa-star");
+            };
+
             return (
                 <div className="max-w-2xl mx-auto space-y-6">
                     <div className="bg-white dark:bg-navy rounded-3xl p-5 md:p-8 shadow-2xl border border-gray-100 dark:border-blue-900 card-hover transition-colors duration-300">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-extrabold flex items-center text-navy dark:text-white">
-                                <i className="fas fa-flag-checkered text-mint mr-3"></i> Mi Ruta Diaria
+                                <i className="fas fa-flag-checkered text-mint mr-3"></i> Mis Retos Diarios
                             </h2>
-                            {/* Indicador de guardado */}
                             <span className={`text-xs font-semibold transition-all duration-300 ${guardando ? 'text-mint animate-pulse' : statusMsg ? 'text-mint' : 'text-gray-300'}`}>
                                 {guardando ? <span><i className="fas fa-circle-notch fa-spin mr-1"></i>Guardando...</span> : statusMsg}
                             </span>
@@ -208,23 +226,37 @@
                                 ></div>
                             </div>
                         </div>
-
-                        {/* Agregar nueva tarea */}
-                        <form onSubmit={addHabit} className="mb-8 flex flex-col sm:flex-row gap-2">
-                            <input
-                                type="text"
-                                value={newTaskText}
-                                onChange={(e) => setNewTaskText(e.target.value)}
-                                placeholder="Escribe un nuevo objetivo..."
-                                className="flex-grow bg-gray-50 dark:bg-blue-950 border border-gray-200 dark:border-blue-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mint focus:ring-2 focus:ring-mint/20 text-navy dark:text-white smooth-transition"
-                            />
-                            <button
-                                type="submit"
-                                className="bg-mint hover:bg-mint-hover text-white px-6 py-3 rounded-xl transition-all active:scale-95 font-bold text-sm shrink-0 shadow-lg shadow-mint/20"
-                            >
-                                <i className="fas fa-plus mr-1"></i> Añadir
-                            </button>
-                        </form>
+                        <div className="mb-8 p-4 bg-gray-50 dark:bg-blue-900/30 rounded-2xl border border-gray-100 dark:border-blue-800">
+                            <form onSubmit={addHabit} className="flex flex-col sm:flex-row gap-2 mb-4">
+                                <input
+                                    type="text"
+                                    value={newTaskText}
+                                    onChange={(e) => setNewTaskText(e.target.value)}
+                                    placeholder="Escribe un nuevo objetivo..."
+                                    className="flex-grow bg-white dark:bg-blue-950 border border-gray-200 dark:border-blue-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mint focus:ring-2 focus:ring-mint/20 text-navy dark:text-white smooth-transition"
+                                />
+                                <button
+                                    type="submit"
+                                    className="bg-mint hover:bg-mint-hover text-white px-6 py-3 rounded-xl transition-all active:scale-95 font-bold text-sm shrink-0 shadow-lg shadow-mint/20"
+                                >
+                                    <i className="fas fa-plus mr-1"></i> Añadir
+                                </button>
+                            </form>
+                            
+                            <div className="flex flex-wrap gap-2">
+                                <span className="text-[10px] font-black uppercase text-gray-400 dark:text-blue-400 w-full mb-1 ml-1 tracking-widest">Elige un icono:</span>
+                                {AVAILABLE_ICONS.map((icon) => (
+                                    <button
+                                        key={icon}
+                                        type="button"
+                                        onClick={() => setSelectedIcon(icon)}
+                                        className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${selectedIcon === icon ? 'bg-mint text-white scale-110 shadow-md ring-2 ring-mint/20' : 'bg-white dark:bg-blue-950 text-gray-400 dark:text-blue-500 hover:bg-gray-100 dark:hover:bg-blue-900 border border-gray-100 dark:border-blue-800'}`}
+                                    >
+                                        <i className={`fas ${icon}`}></i>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
                         <div className="space-y-4">
                             {habits.length === 0 ? (
@@ -244,17 +276,34 @@
                                             {habit.completed && <i className="fas fa-check absolute text-white text-sm pointer-events-none"></i>}
                                         </div>
                                         <span className="w-8 text-center text-mint mx-3 text-lg opacity-80"><i className={`fas ${habit.icon}`}></i></span>
-                                        <span className={`text-base font-semibold tracking-wide smooth-transition flex-grow ${habit.completed ? 'line-through opacity-50 text-gray-500 dark:text-gray-400' : 'text-navy dark:text-white'}`}>
+                                    <span className={`text-base font-semibold tracking-wide smooth-transition flex-grow ${habit.completed ? 'line-through opacity-50 text-gray-500 dark:text-gray-400' : 'text-navy dark:text-white'}`}>
                                             {habit.text}
                                         </span>
                                     </label>
-                                    <button
-                                        onClick={() => removeHabit(habit.id)}
-                                        className="ml-2 w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white smooth-transition flex items-center justify-center border border-red-500/20 md:opacity-0 group-hover:opacity-100 opacity-100 shrink-0"
-                                        title="Eliminar tarea"
-                                    >
-                                        <i className="fas fa-trash-can text-sm"></i>
-                                    </button>
+                                    
+                                    <div className="flex gap-2 ml-2 shrink-0 md:opacity-0 group-hover:opacity-100 opacity-100 transition-opacity">
+                                        {/* Botón de Google Calendar */}
+                                        <button
+                                            onClick={() => {
+                                                const titulo = `Prosper: ${habit.text}`;
+                                                const desc = "Recordatorio de mi ruta de aprendizaje financiero en Prosper. No olvides completar el módulo hoy.";
+                                                const link = generarLinkCalendario(titulo, desc, 24); // Programar para dentro de 24h
+                                                window.open(link, '_blank');
+                                            }}
+                                            className="w-10 h-10 rounded-xl bg-mint/10 hover:bg-navy text-mint hover:text-white smooth-transition flex items-center justify-center border border-mint/20"
+                                            title="Recordatorio en Google Calendar®"
+                                        >
+                                            <i className="fas fa-calendar-plus text-sm"></i>
+                                        </button>
+
+                                        <button
+                                            onClick={() => removeHabit(habit.id)}
+                                            className="w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white smooth-transition flex items-center justify-center border border-red-500/20"
+                                            title="Eliminar tarea"
+                                        >
+                                            <i className="fas fa-trash-can text-sm"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -338,7 +387,7 @@
                                     <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
                                     <a href="tools.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Herramientas</a>
                                     <a href="quiz.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Quiz</a>
-                                    <a href="route.html" className="h-full flex items-center border-b-4 font-bold px-1 py-1 border-mint text-mint">Mi Ruta</a>
+                                    <a href="route.html" className="h-full flex items-center border-b-4 font-bold px-1 py-1 border-mint text-mint">Mis Retos</a>
                                 </nav>
 
                                 <div className="flex items-center">
@@ -364,7 +413,7 @@
                                     )}
 
                                     <a href="acerca.html" className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Acerca de
+                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Aprende a usar la app
                                     </a>
                                     <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                                         <div className="flex items-center">
@@ -411,7 +460,7 @@
                             </a>
                             <a href="route.html" className="flex flex-col items-center justify-center w-full text-mint dark:text-mint-light h-full border-t-2 border-mint dark:border-mint-light pt-1">
                                 <i className="fas fa-route text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-bold">Mi Ruta</span>
+                                <span className="text-[10px] font-bold">Mis Retos</span>
                             </a>
                         </div>
                     </div>
