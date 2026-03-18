@@ -144,10 +144,10 @@
                 </div>
 
                 <!-- Botón de Iniciar Sesión General -->
-                <button onclick="window.abrirModalAuth(); document.getElementById('welcome-modal').style.display='none';" 
+                <button onclick="window.location.href='auth.html';" 
                     class="w-full bg-navy dark:bg-white text-white dark:text-navy font-black py-4 rounded-2xl flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl">
-                    <i class="fas fa-user-circle text-xl"></i>
-                    <span>Iniciar Sesión o Crear Cuenta</span>
+                    <i class="fas fa-user-plus text-xl"></i>
+                    <span>Crear Cuenta o Iniciar Sesión</span>
                 </button>
 
                 <!-- Footer del modal -->
@@ -538,8 +538,8 @@
                                     </div>
 
                                     {!isLoggedIn && (
-                                        <button onClick={() => { window.abrirModalAuth && window.abrirModalAuth(); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                            <i className="fas fa-sign-in-alt w-6"></i> Iniciar Sesión
+                                        <button onClick={() => { window.location.href = 'auth.html'; setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                                            <i class="fas fa-user-plus w-6"></i> Crear cuenta o Iniciar sesión
                                         </button>
                                     )}
 
@@ -610,129 +610,7 @@
          MODAL DE AUTENTICACIÓN FIREBASE
          Funciona independientemente de React gracias a ES Modules.
          ════════════════════════════════════════════════════════════ -->
-    <div id="modal-auth" style="display:none"
-        class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm">
-        <div class="w-full max-w-sm bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-
-            <!-- Cabecera -->
-            <div class="relative bg-gradient-to-r from-[#1E3A8A] to-[#1e40af] p-6 text-white text-center">
-                <button onclick="window.cerrarModalAuth()"
-                    class="absolute top-4 right-4 text-white/60 hover:text-white transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-                <div class="bg-white/15 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-chart-line text-2xl"></i>
-                </div>
-                <h2 class="text-xl font-black">Prosper<span class="text-mint">.</span></h2>
-                <p class="text-xs text-blue-100 mt-1">Tu camino hacia la libertad financiera</p>
-            </div>
-
-            <!-- Tabs -->
-            <div class="flex border-b border-gray-100 dark:border-gray-700">
-                <button
-                    class="auth-tab activo flex-1 py-3 text-sm font-bold text-mint border-b-2 border-mint transition-all"
-                    data-target="panel-registro">Crear cuenta</button>
-                <button
-                    class="auth-tab flex-1 py-3 text-sm font-bold text-gray-400 dark:text-gray-500 border-b-2 border-transparent transition-all"
-                    data-target="panel-login">Iniciar sesión</button>
-            </div>
-
-            <!-- Panel REGISTRO -->
-            <div id="panel-registro" class="auth-panel p-6">
-                <form id="form-registro" class="space-y-3" novalidate>
-                    <div>
-                        <label
-                            class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-600 dark:text-gray-400">Nombre
-                            completo</label>
-                        <input id="reg-nombre" type="text" required placeholder="Ej. María García" autocomplete="name"
-                            class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
-                    </div>
-                    <div>
-                        <label
-                            class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-600 dark:text-gray-400">Correo
-                            electrónico</label>
-                        <input id="reg-email" type="email" required placeholder="tu@correo.com" autocomplete="email"
-                            class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
-                    </div>
-                    <div>
-                        <label
-                            class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-600 dark:text-gray-400">Contraseña
-                            (mín. 6 caracteres)</label>
-                        <input id="reg-password" type="password" required placeholder="••••••••"
-                            autocomplete="new-password"
-                            class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
-                    </div>
-                    <p id="msg-registro" class="auth-mensaje" style="display:none"></p>
-                    <button type="submit"
-                        class="w-full bg-navy hover:bg-navy/90 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
-                        <i class="fas fa-user-plus"></i> Crear Cuenta con Email
-                    </button>
-                </form>
-            </div>
-
-            <!-- Panel LOGIN -->
-            <div id="panel-login" class="auth-panel p-6" style="display:none">
-                <form id="form-login" class="space-y-3" novalidate>
-                    <div>
-                        <label
-                            class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-600 dark:text-gray-400">Correo
-                            electrónico</label>
-                        <input id="login-email" type="email" required placeholder="tu@correo.com" autocomplete="email"
-                            class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
-                    </div>
-                    <div>
-                        <label
-                            class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-600 dark:text-gray-400">Contraseña</label>
-                        <input id="login-password" type="password" required placeholder="••••••••"
-                            autocomplete="current-password"
-                            class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint/50 transition-all text-sm">
-                    </div>
-                    <p id="msg-login" class="auth-mensaje" style="display:none"></p>
-                    <button type="submit"
-                        class="w-full bg-navy hover:bg-navy/90 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
-                        <i class="fas fa-sign-in-alt"></i> Entrar con Email
-                    </button>
-                </form>
-            </div>
-
-            <!-- Botón de Google Único (Social Auth) -->
-            <div class="px-6 pb-6 pt-2 border-t border-gray-100 dark:border-gray-700">
-                <button id="google-btn-main"
-                    class="w-full bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 p-3.5 rounded-2xl flex items-center justify-center gap-3 hover:border-mint transition-all active:scale-95 shadow-sm group">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" alt="Google"
-                        class="w-5 h-5">
-                    <span class="font-bold text-gray-700 dark:text-gray-200 text-sm">Continuar con Google</span>
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Estilos del modal de Auth -->
-    <style>
-        .auth-tab.activo {
-            color: #10B981;
-            border-bottom-color: #10B981;
-        }
-
-        .auth-mensaje {
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .auth-mensaje.error {
-            background: #FEE2E2;
-            color: #DC2626;
-        }
-
-        .auth-mensaje.exito {
-            background: #D1FAE5;
-            color: #065F46;
-        }
-    </style>
+    <!-- scripts de auth se mueven a sus respectivos archivos -->
 
     <!-- Firebase: importado como ES Module nativo -->
     <script type="module" src="auth-ui.js"></script>

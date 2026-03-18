@@ -147,7 +147,7 @@
                                         <div className="bg-white dark:bg-gray-800 p-3 rounded-lg mr-3 shadow-sm"><i className="fas fa-calendar-check text-mint"></i></div>
                                         <div>
                                             <b className="block">Recordatorios Inteligentes</b>
-                                            Añade tus retos a <b>Google Calendar®</b> con un solo clic para no olvidar tus objetivos.
+                                            Añade tus retos a <b>Google Calendar</b> con un solo clic para no olvidar tus objetivos.
                                         </div>
                                     </li>
                                     <li className="flex items-start text-sm">
@@ -158,6 +158,40 @@
                                         </div>
                                     </li>
                                 </ul>
+                            </div>
+
+                            {/* Sección: Seguridad y Privacidad */}
+                            <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-3xl border border-red-100 dark:border-red-900/30">
+                                <div className="flex items-center gap-3 mb-2 text-red-600 dark:text-red-400">
+                                    <i className="fas fa-shield-halved text-xl"></i>
+                                    <h4 className="font-black text-sm uppercase tracking-widest">Aviso de Seguridad</h4>
+                                </div>
+                                <p className="text-xs text-gray-700 dark:text-gray-300 font-medium italic">
+                                    "Por tu seguridad, <strong>nunca ingreses claves bancarias, números de tarjeta ni datos personales sensibles</strong> en esta o cualquier otra plataforma educativa. Prosper solo requiere un nombre y correo para guardar tu progreso académico."
+                                </p>
+                            </div>
+
+                            {/* Sección: Créditos de Desarrollo */}
+                            <div className="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-3xl border border-indigo-100 dark:border-indigo-800">
+                                <div className="flex items-center mb-6">
+                                    <div className="bg-indigo-100 dark:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 w-14 h-14 rounded-2xl flex items-center justify-center mr-5">
+                                        <i className="fas fa-user-ninja text-2xl"></i>
+                                    </div>
+                                    <h4 className="text-2xl font-black text-navy dark:text-white">Desarrollo y Autoría</h4>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-bold text-navy dark:text-white"><i className="fas fa-code-branch mr-2 text-blue-400"></i> Desarrollado por</p>
+                                        <p className="text-lg font-black text-mint">Diego Verde</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-bold text-navy dark:text-white"><i className="fas fa-microchip mr-2 text-purple-500"></i> Tecnología IA</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-lg font-black text-indigo-500">Google Antigravity</p>
+                                            <span className="text-[8px] font-black bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded border border-indigo-500/20 tracking-tighter uppercase">Asistente de Desarrollo</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -181,7 +215,7 @@
                                 <div className="p-4 bg-purple-500/5 dark:bg-purple-500/10 rounded-2xl border border-purple-500/10 flex items-start">
                                     <span className="bg-purple-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">3</span>
                                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                                        <strong>Establece Retos:</strong> Ve a <b>Mis Retos</b> y añade tus propios objetivos. No olvides usar el botón de <b>Google Calendar®</b> para que la app te avise cuándo completar tus tareas.
+                                        <strong>Establece Retos:</strong> Ve a <b>Mis Retos</b> y añade tus propios objetivos. No olvides usar el botón de <b>Google Calendar</b> para que la app te avise cuándo completar tus tareas.
                                     </p>
                                 </div>
                                 <div className="p-4 bg-yellow-500/5 dark:bg-yellow-500/10 rounded-2xl border border-yellow-500/10 flex items-start">
@@ -317,10 +351,9 @@
         }
 
         function App() {
-            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-            const [showRegisterModal, setShowRegisterModal] = useState(false);
-            const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
-            const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+            const [showRegisterModal, setShowRegisterModal] = React.useState(false);
+            const [isLoggedIn, setIsLoggedIn] = React.useState(() => localStorage.getItem('isLoggedIn') === 'true');
+            const [userName, setUserName] = React.useState(() => localStorage.getItem('userName') || '');
             const [darkMode, setDarkMode] = useState(() => {
                 const saved = localStorage.getItem('darkMode');
                 if (saved !== null) return saved === 'true';
@@ -358,69 +391,28 @@
                 setIsLoggedIn(true);
             };
 
-            const toggleUserMenu = () => {
-                setMobileMenuOpen(!mobileMenuOpen);
-            };
-
             return (
                 <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
                     <header className={`backdrop-blur-md shadow-sm sticky top-0 z-50 border-b pb-safe-top transition-colors duration-300 ${darkMode ? 'bg-gray-900/90 border-gray-800 text-white' : 'bg-white/90 border-gray-100 text-gray-800'}`}>
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="flex justify-between h-16 md:h-20 items-center">
-                                <div className="flex items-center cursor-pointer" onClick={() => window.location.href = 'index.html'}>
-                                    <div className="bg-mint text-white p-2 rounded-xl mr-3 shadow-md transform rotate-3">
-                                        <i className="fas fa-chart-line text-lg"></i>
+                                <div className="flex items-center">
+                                    <button onClick={() => window.location.href = 'index.html'} className={`p-2 rounded-xl smooth-transition focus:outline-none flex items-center w-10 h-10 justify-center mr-4 ${darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-50 text-navy hover:bg-gray-100'}`} title="Volver al inicio">
+                                        <i className="fas fa-arrow-left text-xl"></i>
+                                    </button>
+                                    <div className="flex items-center cursor-pointer" onClick={() => window.location.href = 'index.html'}>
+                                        <div className="bg-mint text-white p-2 rounded-xl mr-3 shadow-md transform rotate-3">
+                                            <i className="fas fa-chart-line text-lg"></i>
+                                        </div>
+                                        <span className={`font-black text-2xl tracking-tight transition-colors ${darkMode ? 'text-white' : 'text-navy'}`}>Prosper<span className="text-mint">.</span></span>
                                     </div>
-                                    <span className={`font-black text-2xl tracking-tight transition-colors ${darkMode ? 'text-white' : 'text-navy'}`}>Prosper<span className="text-mint">.</span></span>
                                 </div>
 
-                                <nav className="hidden md:flex space-x-8 items-center h-full">
-                                    <a href="index.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Inicio</a>
-                                    <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
-                                    <a href="tools.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Herramientas</a>
-                                    <a href="quiz.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Quiz</a>
-                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mis Retos</a>
-                                </nav>
-
-                                <div className="flex items-center">
-                                    <button onClick={toggleUserMenu} className={`p-2 rounded-xl smooth-transition focus:outline-none flex items-center w-10 h-10 justify-center ${darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-50 text-navy hover:bg-gray-100'}`}>
-                                        <i className={`fas ${mobileMenuOpen ? 'fa-times' : (isLoggedIn ? 'fa-user-check text-mint' : 'fa-user')} text-xl text-center flex items-center`}></i>
-                                    </button>
+                                <div className="hidden sm:block">
+                                    <span className="text-[10px] font-black text-mint uppercase tracking-[0.2em] bg-mint/10 px-3 py-1 rounded-full">Centro de Ayuda</span>
                                 </div>
                             </div>
                         </div>
-
-                        {mobileMenuOpen && (
-                            <div className={`absolute right-4 top-16 md:right-8 md:top-20 w-64 shadow-2xl z-50 animate-fade-in rounded-2xl overflow-hidden origin-top-right border ${darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-100 text-gray-800'}`}>
-                                <div className="p-3 space-y-1">
-                                    <div className={`px-3 py-3 border-b mb-2 ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-                                        <p className="text-sm font-bold">{isLoggedIn ? userName : 'Invitado'}</p>
-                                        <p className="text-xs opacity-70">{isLoggedIn ? 'Usuario Verificado' : 'Sin iniciar sesión'}</p>
-                                    </div>
-
-                                    {!isLoggedIn && (
-                                        <button onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-mint ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                            <i className="fas fa-sign-in-alt w-6"></i> Iniciar Sesión
-                                        </button>
-                                    )}
-
-                                    <a href="acerca.html" className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Aprende a usar la app
-                                    </a>
-                                    <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                        <div className="flex items-center">
-                                            <i className={`fas ${darkMode ? 'fa-sun text-yellow-500' : 'fa-moon text-indigo-500'} w-6`}></i>
-                                            Tema {darkMode ? 'Claro' : 'Oscuro'}
-                                        </div>
-                                    </button>
-                                    {isLoggedIn && (
-                                        <button onClick={() => { localStorage.clear(); window.location.reload(); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left text-red-500 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                            <i className="fas fa-sign-out-alt w-6"></i> Cerrar Sesión
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        )}
                     </header>
 
                     <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full">
@@ -433,36 +425,6 @@
                         onRegister={handleRegister}
                         darkMode={darkMode}
                     />
-
-                    {/* Bottom Nav para APK/Mobile */}
-                    <div className="md:hidden fixed bottom-0 left-0 w-full transition-colors duration-300 backdrop-blur-md border-t z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:bg-gray-900/95 dark:border-gray-800 bg-white/95 border-gray-200">
-                        <div className="flex justify-around items-end h-16 pb-2 relative">
-                            <a href="aprende.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
-                                <i className="fas fa-book-open text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Aprende</span>
-                            </a>
-                            <a href="quiz.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
-                                <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Quiz</span>
-                            </a>
-
-                            <a href="index.html" className="flex flex-col items-center justify-center w-full relative z-10 bottom-3">
-                                <div className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 hover:text-mint dark:hover:text-mint-light w-14 h-14 rounded-full flex items-center justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-4 border-white dark:border-gray-900 transform hover:scale-105 smooth-transition">
-                                    <i className="fas fa-home text-2xl"></i>
-                                </div>
-                                <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-500 mt-1">Inicio</span>
-                            </a>
-
-                            <a href="tools.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
-                                <i className="fas fa-tools text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Útiles</span>
-                            </a>
-                            <a href="route.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
-                                <i className="fas fa-route text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Mis Retos</span>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             );
         }

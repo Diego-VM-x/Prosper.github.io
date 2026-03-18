@@ -54,8 +54,13 @@ if (formRegistro) {
       await registrarUsuario(email, password, nombre);
       mostrarMensaje("msg-registro", "¡Cuenta creada con éxito! Bienvenido/a a Prosper 🎉", "exito");
       formRegistro.reset();
-      // Opcional: cerrar modal o redirigir
-      setTimeout(() => cerrarModal("modal-auth"), 2000);
+      
+      // Si estamos en la página de auth, redirigir al inicio
+      if (window.location.pathname.includes("auth.html")) {
+        setTimeout(() => window.location.href = "index.html", 2000);
+      } else {
+        setTimeout(() => cerrarModal("modal-auth"), 2000);
+      }
     } catch (error) {
       mostrarMensaje("msg-registro", traducirError(error.code));
     } finally {
@@ -80,7 +85,12 @@ if (formLogin) {
     try {
       await iniciarSesion(email, password);
       mostrarMensaje("msg-login", "¡Sesión iniciada! 👋", "exito");
-      setTimeout(() => cerrarModal("modal-auth"), 1500);
+      
+      if (window.location.pathname.includes("auth.html")) {
+        setTimeout(() => window.location.href = "index.html", 1500);
+      } else {
+        setTimeout(() => cerrarModal("modal-auth"), 1500);
+      }
     } catch (error) {
       mostrarMensaje("msg-login", traducirError(error.code));
     } finally {
@@ -147,9 +157,12 @@ document.querySelectorAll(".auth-tab").forEach((tab) => {
 });
 
 // Cerrar modal al hacer click en el overlay
-document.getElementById("modal-auth")?.addEventListener("click", (e) => {
-  if (e.target.id === "modal-auth") cerrarModal("modal-auth");
-});
+const modalAuth = document.getElementById("modal-auth");
+if (modalAuth) {
+  modalAuth.addEventListener("click", (e) => {
+    if (e.target.id === "modal-auth") cerrarModal("modal-auth");
+  });
+}
 
 // Exponer función globalmente (para botones inline con onclick)
 window.abrirModalAuth = () => abrirModal("modal-auth");

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosper - Unirse a la comunidad</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAFAFA',
+                        mint: '#10B981',
+                        'mint-light': '#D1FAE5',
+                        'mint-hover': '#059669',
+                        navy: '#1E3A8A',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        (function () {
+            const savedMode = localStorage.getItem('darkMode');
+            const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedMode === 'true' || (savedMode === null && systemMode)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-cream dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
+
+    <div class="min-h-screen flex flex-col lg:flex-row">
+        
+        <!-- SECCIÓN IZQUIERDA: Beneficios y Branding (Visible en LG) -->
+        <div class="lg:w-1/2 bg-navy p-8 lg:p-16 flex flex-col justify-center relative overflow-hidden min-h-screen">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-mint/10 rounded-full -translate-y-20 translate-x-20 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-20 -translate-x-20 blur-3xl"></div>
+            
+            <!-- Botón estático rectangular para móvil (bottom right) -->
+            <div class="lg:hidden absolute bottom-28 right-8 cursor-pointer z-20 group" onclick="document.getElementById('auth-form-section').scrollIntoView({behavior: 'smooth'})">
+                <div class="w-12 h-12 rounded-xl bg-mint/20 border border-mint/30 flex items-center justify-center backdrop-blur-md shadow-xl transform group-active:scale-90 transition-all">
+                    <i class="fas fa-arrow-down text-mint text-lg"></i>
+                </div>
+            </div>
+
+            <div class="relative z-10 space-y-8 animate-slide-up">
+                <div class="flex items-center cursor-pointer mb-12" onclick="window.location.href='index.html'">
+                    <div class="bg-mint text-white p-3 rounded-2xl mr-4 shadow-xl transform rotate-3">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <span class="font-black text-4xl tracking-tight text-white">Prosper<span class="text-mint">.</span></span>
+                </div>
+
+                <h1 class="text-4xl lg:text-5xl font-black text-white leading-tight">
+                    Tu camino a la <span class="text-mint">libertad financiera</span> comienza aquí.
+                </h1>
+
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-white/10 p-3 rounded-xl border border-white/10 text-mint">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-white uppercase text-xs tracking-widest mb-1">Sincronización Total</h3>
+                            <p class="text-blue-100/70 text-sm">Accede a tus datos y progreso desde cualquier dispositivo sin perder nada.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="bg-white/10 p-3 rounded-xl border border-white/10 text-mint">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-white uppercase text-xs tracking-widest mb-1">Información Exclusiva</h3>
+                            <p class="text-blue-100/70 text-sm">Recibirás guías financieras extra y detalles de la app directo en tu correo.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="bg-white/10 p-3 rounded-xl border border-white/10 text-mint">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-white uppercase text-xs tracking-widest mb-1">Actualizaciones Prioritarias</h3>
+                            <p class="text-blue-100/70 text-sm">Sé el primero en probar nuevas herramientas y calculadoras que lancemos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-white/10">
+                    <p class="text-xs text-blue-200/50 font-medium italic">"La educación financiera es el arma más poderosa para cambiar tu futuro."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DERECHA: Formulario -->
+        <div id="auth-form-section" class="lg:w-1/2 bg-cream dark:bg-gray-800 flex items-center justify-center p-6 lg:p-12 min-h-screen relative">
+            <div class="w-full max-w-md animate-fade-in">
+                
+                <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    
+                    <!-- Tabs -->
+                    <div class="flex border-b border-gray-100 dark:border-gray-700">
+                        <button class="auth-tab activo flex-1 py-5 text-sm font-black uppercase tracking-widest text-mint border-b-4 border-mint transition-all" data-target="panel-registro">Registrarme</button>
+                        <button class="auth-tab flex-1 py-5 text-sm font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 border-b-4 border-transparent transition-all" data-target="panel-login">Entrar</button>
+                    </div>
+
+                    <!-- Panel REGISTRO -->
+                    <div id="panel-registro" class="auth-panel p-8">
+                        <form id="form-registro" class="space-y-4" novalidate>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-gray-500">Nombre completo</label>
+                                <input id="reg-nombre" type="text" required placeholder="Tu nombre" class="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-gray-500">Correo electrónico</label>
+                                <input id="reg-email" type="email" required placeholder="tu@correo.com" class="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-gray-500">Crea tu contraseña</label>
+                                <input id="reg-password" type="password" required placeholder="••••••••" class="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint transition-all">
+                            </div>
+                            
+                            <p id="msg-registro" class="auth-mensaje hidden text-xs font-bold p-3 rounded-lg"></p>
+
+                            <button type="submit" class="w-full bg-navy dark:bg-mint text-white font-black py-4 rounded-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-sm uppercase tracking-widest mt-4">
+                                <i class="fas fa-user-plus mr-2"></i> Crear mi cuenta
+                            </button>
+                            
+                            <p class="text-[10px] text-center text-gray-400 mt-4 leading-relaxed font-medium">
+                                Al registrarte, aceptas recibir actualizaciones y material educativo en tu correo. Puedes darte de baja en cualquier momento.
+                            </p>
+                        </form>
+                    </div>
+
+                    <!-- Panel LOGIN -->
+                    <div id="panel-login" class="auth-panel p-8 hidden">
+                        <form id="form-login" class="space-y-4" novalidate>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-gray-500">Correo electrónico</label>
+                                <input id="login-email" type="email" required placeholder="tu@correo.com" class="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-gray-500">Tu contraseña</label>
+                                <input id="login-password" type="password" required placeholder="••••••••" class="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-mint transition-all">
+                            </div>
+
+                            <p id="msg-login" class="auth-mensaje hidden text-xs font-bold p-3 rounded-lg"></p>
+
+                            <button type="submit" class="w-full bg-navy dark:bg-mint text-white font-black py-4 rounded-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-sm uppercase tracking-widest mt-4">
+                                <i class="fas fa-sign-in-alt mr-2"></i> Iniciar sesión
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="mt-8 text-center">
+                    <a href="index.html" class="text-sm font-bold text-gray-400 hover:text-navy dark:hover:text-white transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Volver al inicio
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .auth-tab.activo {
+            color: #10B981;
+            border-bottom-color: #10B981;
+        }
+        .auth-mensaje.error { background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; }
+        .auth-mensaje.exito { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+    </style>
+
+    <script type="module" src="auth-ui.js"></script>
+
+</body>
+
+</html>
