@@ -83,57 +83,117 @@
                             ¿Cómo funciona la App?
                         </h3>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex bg-gray-50 dark:bg-gray-700/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-600 transition-colors duration-300 card-hover hover:border-mint/50">
-                                <div className="bg-mint-light dark:bg-mint/20 text-mint w-12 h-12 rounded-full flex items-center justify-center shrink-0 mr-4">
-                                    <i className="fas fa-book-open text-xl"></i>
+                        <div className="grid grid-cols-1 gap-12">
+                            {/* Sección: Aprende */}
+                            <div className="bg-gray-50 dark:bg-gray-700/30 p-8 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                <div className="flex items-center mb-6">
+                                    <div className="bg-mint/10 text-mint w-14 h-14 rounded-2xl flex items-center justify-center mr-5">
+                                        <i className="fas fa-book-open text-2xl"></i>
+                                    </div>
+                                    <h4 className="text-2xl font-black text-navy dark:text-white">Módulos de Aprendizaje</h4>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-navy dark:text-white mb-1 text-lg">Aprende</h4>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed">
-                                        Módulos de lectura con conceptos vitales como el ahorro, presupuestos e inversiones, explicados desde cero para cualquier persona.
-                                    </p>
+                                <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                                    Tu base de conocimientos financieros. No son solo artículos, son lecciones diseñadas para cambiar tu mentalidad sobre el dinero.
+                                </p>
+                                <ul className="space-y-3">
+                                    <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                                        <i className="fas fa-check-circle text-mint mr-2"></i><b>Conceptos Clave:</b> Ahorro, inversión, inflación y presupuestos.
+                                    </li>
+                                    <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                                        <i className="fas fa-check-circle text-mint mr-2"></i><b>Ejemplos Reales:</b> Adaptados a la economía actual y su impacto diario.
+                                    </li>
+                                    <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                                        <i className="fas fa-check-circle text-mint mr-2"></i><b>Lectura Rápida:</b> Formato optimizado para leer en cualquier momento.
+                                    </li>
+                                </ul>
+                            </div>
+
+                            {/* Sección: Útiles (Herramientas) */}
+                            <div className="bg-gray-50 dark:bg-gray-700/30 p-8 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                <div className="flex items-center mb-6">
+                                    <div className="bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 w-14 h-14 rounded-2xl flex items-center justify-center mr-5">
+                                        <i className="fas fa-tools text-2xl"></i>
+                                    </div>
+                                    <h4 className="text-2xl font-black text-navy dark:text-white">Herramientas Financieras</h4>
+                                </div>
+                                <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                                    Calculadoras interactivas que transforman la teoría en números que puedes entender y gestionar.
+                                </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+                                        <h5 className="font-bold mb-2">Regla 50/30/20</h5>
+                                        <p className="text-xs text-gray-500">Divide tu sueldo en: Necesidades (50%), Deseos (30%) y Ahorro/Deuda (20%).</p>
+                                    </div>
+                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+                                        <h5 className="font-bold mb-2">Control de Gastos</h5>
+                                        <p className="text-xs text-gray-500">Visualiza cuánto gastas al día y cómo afecta tu capacidad de ahorro mensual.</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="flex bg-gray-50 dark:bg-gray-700/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-600 transition-colors duration-300 card-hover hover:border-blue-500/50">
-                                <div className="bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 w-12 h-12 rounded-full flex items-center justify-center shrink-0 mr-4">
-                                    <i className="fas fa-tools text-xl"></i>
+                            {/* Sección: Mis Retos */}
+                            <div className="bg-gray-50 dark:bg-gray-700/30 p-8 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                <div className="flex items-center mb-6">
+                                    <div className="bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 dark:text-yellow-400 w-14 h-14 rounded-2xl flex items-center justify-center mr-5">
+                                        <i className="fas fa-route text-2xl"></i>
+                                    </div>
+                                    <h4 className="text-2xl font-black text-navy dark:text-white">Gestión de Retos y Hábitos</h4>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-navy dark:text-white mb-1 text-lg">Útiles (Herramientas)</h4>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed">
-                                        Calculadoras prácticas de finanzas personales. Aquí puedes proyectar tu presupuesto 50/30/20, calcular rendimientos y descubrir tus gastos diarios.
+                                <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                                    La perseverancia es la clave del éxito. Aquí es donde personalizas tu camino y mides tu constancia.
+                                </p>
+                                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <li className="flex items-start text-sm">
+                                        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg mr-3 shadow-sm"><i className="fas fa-calendar-check text-mint"></i></div>
+                                        <div>
+                                            <b className="block">Recordatorios Inteligentes</b>
+                                            Añade tus retos a <b>Google Calendar®</b> con un solo clic para no olvidar tus objetivos.
+                                        </div>
+                                    </li>
+                                    <li className="flex items-start text-sm">
+                                        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg mr-3 shadow-sm"><i className="fas fa-cloud-upload text-blue-500"></i></div>
+                                        <div>
+                                            <b className="block">Respaldo en la Nube</b>
+                                            Tus datos se sincronizan mediante <b>Firebase</b> para que nunca pierdas tu progreso.
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="mt-12">
+                            <h3 className="text-2xl font-bold text-navy dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
+                                Guía de Inicio Rápido 🚀
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="p-4 bg-mint/5 dark:bg-mint/10 rounded-2xl border border-mint/10 flex items-start">
+                                    <span className="bg-mint text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">1</span>
+                                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                                        <strong>Explora y Aprende:</strong> Comienza leyendo los artículos en la sección <b>Aprende</b>. Están diseñados para leerse en menos de 3 minutos.
                                     </p>
                                 </div>
-                            </div>
-
-                            <div className="flex bg-gray-50 dark:bg-gray-700/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-600 transition-colors duration-300 card-hover hover:border-purple-500/50">
-                                <div className="bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 w-12 h-12 rounded-full flex items-center justify-center shrink-0 mr-4">
-                                    <i className="fas fa-bolt text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-navy dark:text-white mb-1 text-lg">Quiz</h4>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed">
-                                        Pon a prueba lo que vas aprendiendo a través de preguntas interactivas. Fija tus conocimientos sin presiones y con explicaciones de inmediato.
+                                <div className="p-4 bg-blue-500/5 dark:bg-blue-500/10 rounded-2xl border border-blue-500/10 flex items-start">
+                                    <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">2</span>
+                                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                                        <strong>Calcula tu Realidad:</strong> Usa las <b>Herramientas Útiles</b> para ver cómo se aplica la regla 50/30/20 a tu sueldo real o cuánto podrías ahorrar.
                                     </p>
                                 </div>
-                            </div>
-
-                            <div className="flex bg-gray-50 dark:bg-gray-700/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-600 transition-colors duration-300 card-hover hover:border-yellow-500/50">
-                                <div className="bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 dark:text-yellow-400 w-12 h-12 rounded-full flex items-center justify-center shrink-0 mr-4">
-                                    <i className="fas fa-route text-xl"></i>
+                                <div className="p-4 bg-purple-500/5 dark:bg-purple-500/10 rounded-2xl border border-purple-500/10 flex items-start">
+                                    <span className="bg-purple-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">3</span>
+                                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                                        <strong>Establece Retos:</strong> Ve a <b>Mis Retos</b> y añade tus propios objetivos. No olvides usar el botón de <b>Google Calendar®</b> para que la app te avise cuándo completar tus tareas.
+                                    </p>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-navy dark:text-white mb-1 text-lg">Mi Ruta</h4>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed">
-                                        Un tracker de progreso diario enfocado en tus rutinas financieras. Completa tus objetivos y observa tu constancia florecer hacia el 100%.
+                                <div className="p-4 bg-yellow-500/5 dark:bg-yellow-500/10 rounded-2xl border border-yellow-500/10 flex items-start">
+                                    <span className="bg-yellow-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">4</span>
+                                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                                        <strong>Sincroniza en la Nube:</strong> Crea una cuenta para que tus retos y progreso te sigan en cualquier dispositivo de forma segura.
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-8 text-center bg-mint-light/30 dark:bg-gray-700/30 p-8 rounded-2xl border border-mint/20 dark:border-mint/10 animate-pulse-slow">
+                        <div className="mt-12 text-center bg-mint-light/30 dark:bg-gray-700/30 p-8 rounded-[2.5rem] border border-mint/20 dark:border-mint/10 animate-pulse-slow">
                             <p className="text-navy dark:text-white font-medium text-lg mb-2 italic">
                                 "La mejor inversión que puedes hacer es en ti mismo."
                             </p>
@@ -319,7 +379,7 @@
                                     <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
                                     <a href="tools.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Herramientas</a>
                                     <a href="quiz.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Quiz</a>
-                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mi Ruta</a>
+                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mis Retos</a>
                                 </nav>
 
                                 <div className="flex items-center">
@@ -345,7 +405,7 @@
                                     )}
 
                                     <a href="acerca.html" className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold smooth-transition ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Acerca de
+                                        <i className="fas fa-info-circle w-6 text-blue-500"></i> Aprende a usar la app
                                     </a>
                                     <button onClick={() => { setDarkMode(!darkMode); setMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold smooth-transition text-left ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                                         <div className="flex items-center">
@@ -399,7 +459,7 @@
                             </a>
                             <a href="route.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
                                 <i className="fas fa-route text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Mi Ruta</span>
+                                <span className="text-[10px] font-semibold">Mis Retos</span>
                             </a>
                         </div>
                     </div>
