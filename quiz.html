@@ -395,12 +395,12 @@
                                     <span className={`font-black text-2xl tracking-tight transition-colors ${darkMode ? 'text-white' : 'text-navy'}`}>Prosper<span className="text-mint">.</span></span>
                                 </div>
 
-                                <nav className="hidden md:flex space-x-8 items-center h-full">
-                                    <a href="index.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Inicio</a>
-                                    <a href="aprende.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Aprende</a>
-                                    <a href="tools.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Herramientas</a>
-                                    <a href="quiz.html" className={`h-full flex items-center border-b-4 font-bold px-1 py-1 border-mint text-mint`}>Quiz</a>
-                                    <a href="route.html" className="h-full flex items-center text-gray-500 hover:text-navy hover:border-b-4 hover:border-gray-300 border-b-4 border-transparent font-semibold px-1 py-1 smooth-transition">Mis Retos</a>
+                                <nav className="hidden md:flex space-x-10 items-center h-full">
+                                    <a href="index.html" className="nav-line-neon h-full flex items-center text-gray-400 dark:text-gray-500 hover:text-navy dark:hover:text-white font-black uppercase text-xs tracking-widest px-1 py-1 smooth-transition">Inicio</a>
+                                    <a href="aprende.html" className="nav-line-neon h-full flex items-center text-gray-400 dark:text-gray-500 hover:text-navy dark:hover:text-white font-black uppercase text-xs tracking-widest px-1 py-1 smooth-transition">Aprende</a>
+                                    <a href="tools.html" className="nav-line-neon h-full flex items-center text-gray-400 dark:text-gray-500 hover:text-navy dark:hover:text-white font-black uppercase text-xs tracking-widest px-1 py-1 smooth-transition">Herramientas</a>
+                                    <a href="quiz.html" className="nav-line-neon active h-full flex items-center font-black uppercase text-xs tracking-widest px-1 py-1">Quiz</a>
+                                    <a href="route.html" className="nav-line-neon h-full flex items-center text-gray-400 dark:text-gray-500 hover:text-navy dark:hover:text-white font-black uppercase text-xs tracking-widest px-1 py-1 smooth-transition">Mis Retos</a>
                                 </nav>
 
                                 <div className="flex items-center">
@@ -456,31 +456,31 @@
                     />
 
                     {/* Bottom Nav para APK/Mobile */}
-                    <div className="md:hidden fixed bottom-0 left-0 w-full transition-colors duration-300 backdrop-blur-md border-t z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:bg-gray-900/95 dark:border-gray-800 bg-white/95 border-gray-200">
+                    <div className="md:hidden fixed bottom-0 left-0 w-full transition-colors duration-300 backdrop-blur-md border-t z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:bg-gray-900/95 dark:border-gray-800 bg-white/95 border-gray-200 bottom-nav-neon-top">
                         <div className="flex justify-around items-end h-16 pb-2 relative">
-                            <a href="aprende.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                            <a href="aprende.html" className="flex flex-col items-center justify-center w-full text-gray-400 dark:text-gray-500 hover:text-navy dark:hover:text-white smooth-transition h-full pt-1">
                                 <i className="fas fa-book-open text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Aprende</span>
+                                <span className="text-[10px] font-black uppercase">Aprende</span>
                             </a>
-                            <a href="quiz.html" className="flex flex-col items-center justify-center w-full text-mint dark:text-mint-light h-full border-t-2 border-mint dark:border-mint-light pt-1">
-                                <i className="fas fa-bolt text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-bold">Quiz</span>
+                            <a href="quiz.html" className="flex flex-col items-center justify-center w-full smooth-transition h-full pt-1">
+                                <i className="fas fa-bolt text-xl mb-1 mt-1 text-mint"></i>
+                                <span className="text-[10px] font-black uppercase text-mint active-text-glow">Quiz</span>
                             </a>
 
                             <a href="index.html" className="flex flex-col items-center justify-center w-full relative z-10 bottom-3">
                                 <div className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 hover:text-mint dark:hover:text-mint-light w-14 h-14 rounded-full flex items-center justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-4 border-white dark:border-gray-900 transform hover:scale-105 smooth-transition">
                                     <i className="fas fa-home text-2xl"></i>
                                 </div>
-                                <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-500 mt-1">Inicio</span>
+                                <span className="text-[10px] font-black uppercase text-gray-500 dark:text-gray-500 mt-1">Inicio</span>
                             </a>
 
-                            <a href="tools.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                            <a href="tools.html" className="flex flex-col items-center justify-center w-full text-gray-400 dark:text-gray-500 hover:text-navy dark:hover:text-white smooth-transition h-full pt-1">
                                 <i className="fas fa-tools text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Útiles</span>
+                                <span className="text-[10px] font-black uppercase">Útiles</span>
                             </a>
-                            <a href="route.html" className="flex flex-col items-center justify-center w-full dark:text-gray-500 text-gray-500 dark:hover:text-white hover:text-navy smooth-transition h-full border-t-2 border-transparent pt-1">
+                            <a href="route.html" className="flex flex-col items-center justify-center w-full text-gray-400 dark:text-gray-500 hover:text-navy dark:hover:text-white smooth-transition h-full pt-1">
                                 <i className="fas fa-route text-xl mb-1 mt-1"></i>
-                                <span className="text-[10px] font-semibold">Mis Retos</span>
+                                <span className="text-[10px] font-black uppercase">Mis Retos</span>
                             </a>
                         </div>
                     </div>

@@ -14,6 +14,70 @@ body {
     box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -5px rgba(0, 0, 0, 0.05);
 }
 
+/* --- Neon Nav Indicator (Compartido por toda la app) --- */
+.nav-line-neon {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-line-neon.active {
+    color: #10B981 !important;
+}
+
+/* La línea neón para el ítem activo */
+.nav-line-neon.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 4px;
+    background: #10B981;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.8), 0 0 25px rgba(16, 185, 129, 0.4);
+    z-index: 10;
+}
+
+/* Animación de deslizamiento al pasar el mouse */
+.nav-line-neon:not(.active):hover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 60%;
+    height: 3px;
+    background: rgba(16, 185, 129, 0.4);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    animation: slideIn 0.3s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes slideIn {
+    from { width: 0; opacity: 0; left: 50%; }
+    to { width: 60%; opacity: 1; left: 20%; }
+}
+
+/* Efecto especial para el Bottom Nav de Móvil */
+.bottom-nav-neon-top {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bottom-nav-neon-top::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.2), transparent);
+}
+
+/* Efecto de Texto Neón para el Menú Inferior movil */
+.bottom-nav-neon-top .active-text-glow {
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.4);
+    color: #10B981 !important;
+}
+
 .smooth-transition {
     transition: all 0.2s ease-in-out;
 }
@@ -34,4 +98,13 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+/* Utilería para ocultar barra de scroll pero permitir funcionalidad */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

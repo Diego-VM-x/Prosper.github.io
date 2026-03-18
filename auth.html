@@ -119,11 +119,37 @@
                 
                 <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                     
-                    <!-- Tabs -->
-                    <div class="flex border-b border-gray-100 dark:border-gray-700">
-                        <button class="auth-tab activo flex-1 py-5 text-sm font-black uppercase tracking-widest text-mint border-b-4 border-mint transition-all" data-target="panel-registro">Registrarme</button>
-                        <button class="auth-tab flex-1 py-5 text-sm font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 border-b-4 border-transparent transition-all" data-target="panel-login">Entrar</button>
+                    <!-- Tabs con indicador neón deslizante -->
+                    <div class="relative flex border-b border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <button class="auth-tab activo flex-1 py-5 text-[10px] font-black uppercase tracking-widest text-mint transition-all z-10" data-target="panel-registro">Registrarme</button>
+                        <button class="auth-tab flex-1 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 transition-all z-10" data-target="panel-login">Entrar</button>
+                        
+                        <!-- Línea Neón Deslizante -->
+                        <div id="auth-tab-indicator" class="absolute bottom-0 left-0 w-1/2 h-1 bg-mint shadow-[0_0_15px_rgba(16,185,129,0.8)] transition-all duration-500 ease-in-out"></div>
                     </div>
+
+                    <!-- Script para mover el indicador sin bugs -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const tabs = document.querySelectorAll('.auth-tab');
+                            const indicator = document.getElementById('auth-tab-indicator');
+                            
+                            tabs.forEach((tab, index) => {
+                                tab.addEventListener('click', () => {
+                                    // Mover línea neón (0% o 50% según el índice)
+                                    indicator.style.left = (index * 50) + '%';
+                                    
+                                    // Actualizar colores de texto
+                                    tabs.forEach(t => {
+                                        t.classList.remove('text-mint', 'activo');
+                                        t.classList.add('text-gray-400', 'dark:text-gray-500');
+                                    });
+                                    tab.classList.add('text-mint', 'activo');
+                                    tab.classList.remove('text-gray-400', 'dark:text-gray-500');
+                                });
+                            });
+                        });
+                    </script>
 
                     <!-- Panel REGISTRO -->
                     <div id="panel-registro" class="auth-panel p-8">
