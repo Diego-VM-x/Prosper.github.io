@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Prosper - Educación Financiera para Jóvenes</title>
     <meta name="description"
         content="Prosper es la plataforma líder en educación financiera para jóvenes. Aprende sobre inversión, ahorro, interés compuesto y gestiona tus finanzas de forma sencilla.">
@@ -702,16 +702,13 @@
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
             const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
             const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
-            const [contentWidth, setContentWidth] = useState(() => localStorage.getItem('contentWidth') || 'max-w-6xl');
+            const contentWidth = 'max-w-6xl';
             const [darkMode, setDarkMode] = useState(() => {
                 const saved = localStorage.getItem('darkMode');
                 if (saved !== null) return saved === 'true';
                 return window.matchMedia('(prefers-color-scheme: dark)').matches;
             });
 
-            React.useEffect(() => {
-                localStorage.setItem('contentWidth', contentWidth);
-            }, [contentWidth]);
 
             React.useEffect(() => {
                 localStorage.setItem('isLoggedIn', isLoggedIn);
@@ -797,31 +794,13 @@
                                         </button>
                                     )}
 
-                                    {/* Ajuste de Ancho (PC) */}
-                                    <div className="hidden md:block p-4 border-t border-gray-100 dark:border-gray-700">
-                                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-3">Anchura de la web</p>
-                                        <div className="flex gap-2 bg-gray-50 dark:bg-gray-900 p-1 rounded-xl">
-                                            {[
-                                                { id: 'max-w-4xl', label: 'Pequeño' },
-                                                { id: 'max-w-6xl', label: 'Mediano' },
-                                                { id: 'max-w-[1400px]', label: 'Grande' }
-                                            ].map(opt => (
-                                                <button
-                                                    key={opt.id}
-                                                    onClick={() => setContentWidth(opt.id)}
-                                                    className={`flex-1 py-2 text-[9px] font-black uppercase rounded-lg transition-all ${contentWidth === opt.id ? 'bg-mint text-white shadow-md' : 'text-gray-400 hover:text-navy dark:hover:text-white'}`}
-                                                >
-                                                    {opt.label}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                         )}
                     </header>
 
-                    <main className={`flex-grow mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 transition-all duration-500 animate-fade-in ${contentWidth}`}>
+                    <main className={`flex-grow w-full max-w-full min-w-0 mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 transition-all duration-500 animate-fade-in ${contentWidth}`}>
                         <Dashboard />
                     </main>
 

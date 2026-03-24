@@ -77,7 +77,47 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect, useRef } = React;
+
+        function SectionHelp({ title, description, benefits, link }) {
+            const [isOpen, setIsOpen] = useState(false);
+            const [darkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+            
+            return (
+                <div className="mb-0">
+                    <button 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className={`group flex items-center gap-2 font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-full border smooth-transition shadow-sm hover:scale-105 active:scale-95 ${isOpen ? 'bg-mint text-white border-mint' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-700 hover:text-navy dark:hover:text-white'}`}
+                    >
+                        <i className={`fas ${isOpen ? 'fa-times-circle' : 'fa-question-circle font-black'} text-xs`}></i>
+                        {isOpen ? 'Cerrar Guía' : '¿Para qué sirve esta sección?'}
+                    </button>
+                    
+                    {isOpen && (
+                        <div className="mt-4 p-6 md:p-8 bg-white dark:bg-gray-800/40 rounded-[2rem] border-2 border-mint/20 dark:border-mint/10 shadow-2xl animate-fade-in relative overflow-hidden backdrop-blur-xl">
+                            <i className="fas fa-info-circle absolute -right-6 -bottom-6 text-mint opacity-10 text-9xl z-0 transform -rotate-12"></i>
+                            <div className="relative z-10">
+                                <h4 className="text-xl font-black text-navy dark:text-white mb-3">{title}</h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6 italic">
+                                    "{description}"
+                                </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    {benefits.map((b, i) => (
+                                        <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700/50">
+                                            <i className="fas fa-check-circle text-mint mt-1"></i>
+                                            <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{b}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <a href={link} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-mint hover:text-navy dark:hover:text-white transition-colors group">
+                                    Ver guía completa <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </a>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
         const ARTICLES = [
             {
                 id: 1,
@@ -368,12 +408,12 @@
 
             return (
                 <div className="space-y-6 md:space-y-8">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div className="flex flex-col gap-3 mb-6">
                         <h2 className="text-2xl font-extrabold text-navy dark:text-white flex items-center">
                             <i className="fas fa-book-open text-mint mr-3"></i> Lecturas sugeridas para ti
                         </h2>
 
-                        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                        <div className="flex flex-wrap gap-2">
                             {categories.map(cat => (
                                 <button
                                     key={cat}
@@ -663,16 +703,29 @@
                         )}
                     </header>
 
-                    <main className={`flex-grow mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 transition-all duration-500 animate-fade-in ${contentWidth}`}>
+                    <main className={`flex-grow w-full min-w-0 mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-24 md:pb-12 transition-all duration-500 animate-fade-in ${contentWidth}`}>
                         <div className="mb-8 md:mb-12">
                             <span className="text-mint font-bold uppercase tracking-widest text-xs mb-2 block">Crecimiento Financiero</span>
                             <h1 className="text-4xl md:text-5xl font-black text-navy dark:text-white mb-4 leading-tight">
                                 Bienvenido a <br className="md:hidden" />
                                 <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-navy via-mint-hover to-mint dark:from-white dark:via-emerald-400 dark:to-mint pb-1 pr-2">tu mejor versión.</span>
                             </h1>
-                            <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium max-w-2xl">
+                            <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium max-w-2xl mb-6">
                                 Finanzas personales explicadas sin términos confusos. Comienza tu camino hacia la libertad hoy.
                             </p>
+                            
+                            {/* BOTÓN DE AYUDA INTEGRADO */}
+                            <SectionHelp 
+                                title="Módulos de Aprendizaje"
+                                description="Esta sección es tu base de conocimientos. Aquí transformamos conceptos complejos en lecturas rápidas de 3 minutos."
+                                benefits={[
+                                    "Aprende sobre ahorro e inversión",
+                                    "Entiende el impacto de la inflación",
+                                    "Conceptos aplicables a la vida real",
+                                    "Actualizaciones semanales de tips"
+                                ]}
+                                link="acerca.html"
+                            />
                         </div>
 
                         <ArticleFeed />
@@ -733,4 +786,3 @@
 </body>
 
 </html>
-```
