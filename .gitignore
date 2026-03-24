@@ -1,0 +1,11 @@
+# Node dependencies
+node_modules/
+Archived-Mobile/
+Archived-Mobile
+
+# Web Assets
+www/
+
+# OS files
+.DS_Store
+Thumbs.db
