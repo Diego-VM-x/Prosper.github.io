@@ -63,8 +63,90 @@
         const { useState } = React;
 
         function AboutContent() {
+            const [tutorialOpen, setTutorialOpen] = useState(false);
+
             return (
                 <div className="space-y-6">
+
+                    <div id="tutorial" className="bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300 animate-fade-in">
+                        <button 
+                            onClick={() => setTutorialOpen(!tutorialOpen)}
+                            className="w-full flex items-center justify-between focus:outline-none"
+                        >
+                            <h3 className="text-2xl font-bold text-navy dark:text-white flex items-center gap-3 text-left">
+                                <i className="fas fa-play-circle text-mint"></i> Tutorial Visual de Prosper 📱
+                            </h3>
+                            <div className={`w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 transition-transform duration-300 ${tutorialOpen ? 'rotate-180 shadow-inner' : 'shadow-sm'}`}>
+                                <i className="fas fa-chevron-down text-sm"></i>
+                            </div>
+                        </button>
+                        
+                        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${tutorialOpen ? 'max-h-[3000px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+                                <div className="bg-gray-50 dark:bg-gray-800/80 rounded-[2rem] p-4 text-center border border-gray-100 dark:border-gray-700 hover:scale-105 transition-all shadow-md">
+                                    <h4 className="font-bold text-navy dark:text-white mb-3 tracking-wide">Paso 1: Inicio</h4>
+                                    <div className="rounded-2xl overflow-hidden border-4 border-gray-800 shadow-xl mb-4 bg-gray-200 aspect-[9/16]">
+                                        <img src="images/tutorial/home.png" alt="Pantalla de inicio de Prosper" className="object-cover w-full h-full" />
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-medium">Desde la pantalla principal, consulta sugerencias rápidas y accede con un toque a cualquier módulo de la aplicación.</p>
+                                </div>
+                                <div className="bg-gray-50 dark:bg-gray-800/80 rounded-[2rem] p-4 text-center border border-gray-100 dark:border-gray-700 hover:scale-105 transition-all shadow-md">
+                                    <h4 className="font-bold text-navy dark:text-white mb-3 tracking-wide">Paso 2: Aprende</h4>
+                                    <div className="rounded-2xl overflow-hidden border-4 border-gray-800 shadow-xl mb-4 bg-gray-200 aspect-[9/16]">
+                                        <img src="images/tutorial/aprende.png" alt="Sección educativa de Prosper" className="object-cover w-full h-full" />
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-medium">Lee artículos rápidos sobre ahorro, inversiones y mentalidad. ¡Conviértete en un experto del dinero paso a paso!</p>
+                                </div>
+                                <div className="bg-gray-50 dark:bg-gray-800/80 rounded-[2rem] p-4 text-center border border-gray-100 dark:border-gray-700 hover:scale-105 transition-all shadow-md">
+                                    <h4 className="font-bold text-navy dark:text-white mb-3 tracking-wide">Paso 3: Útiles</h4>
+                                    <div className="rounded-2xl overflow-hidden border-4 border-gray-800 shadow-xl mb-4 bg-gray-200 aspect-[9/16]">
+                                        <img src="images/tutorial/tools.png" alt="Herramientas financieras de Prosper" className="object-cover w-full h-full" />
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-medium">Usa calculadoras gratuitas como la regla 50/30/20, gastos diarios, el poder del interés compuesto y tu patrimonio.</p>
+                                </div>
+                                <div className="bg-gray-50 dark:bg-gray-800/80 rounded-[2rem] p-4 text-center border border-gray-100 dark:border-gray-700 hover:scale-105 transition-all shadow-md">
+                                    <h4 className="font-bold text-navy dark:text-white mb-3 tracking-wide">Paso 4: Mis Retos</h4>
+                                    <div className="rounded-2xl overflow-hidden border-4 border-gray-800 shadow-xl mb-4 bg-gray-200 aspect-[9/16]">
+                                        <img src="images/tutorial/route.png" alt="Gestor de retos en Prosper" className="object-cover w-full h-full" />
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-medium">Marca tus metas cumplidas. Las acciones pequeñas y repetitivas logran la verdadera libertad financiera.</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-10 pt-8 border-t border-gray-100 dark:border-gray-700">
+                                <h4 className="text-xl font-bold text-navy dark:text-white mb-6 text-center">
+                                    Galería: Versatilidad y Diseño
+                                </h4>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                     <div className="rounded-2xl overflow-hidden shadow-md transform hover:scale-105 transition-all aspect-[9/16] border border-gray-200 dark:border-gray-700 relative group bg-gray-100">
+                                         <img src="images/tutorial/collage_light.png" alt="Tema Claro" className="object-cover w-full h-full" />
+                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                                             <span className="text-white text-xs font-bold uppercase tracking-widest bg-black/40 px-3 py-1 rounded-full">Tema Claro</span>
+                                         </div>
+                                     </div>
+                                     <div className="rounded-2xl overflow-hidden shadow-md transform hover:scale-105 transition-all aspect-[9/16] border border-gray-200 dark:border-gray-700 relative group bg-gray-900">
+                                         <img src="images/tutorial/collage_dark.png" alt="Tema Oscuro" className="object-cover w-full h-full" />
+                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                                             <span className="text-white text-xs font-bold uppercase tracking-widest bg-black/40 px-3 py-1 rounded-full">Tema Oscuro</span>
+                                         </div>
+                                     </div>
+                                     <div className="rounded-2xl overflow-hidden shadow-md transform hover:scale-105 transition-all aspect-[9/16] border border-gray-200 dark:border-gray-700 relative group bg-gray-900">
+                                         <img src="images/tutorial/route.png" alt="Ejemplos de Retos" className="object-cover w-full h-full" />
+                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity duration-300">
+                                             <span className="text-white text-[10px] font-black uppercase text-center tracking-widest bg-black/40 px-3 py-2 rounded-full leading-none">Ejemplos<br/><span className="text-mint">de Retos</span></span>
+                                         </div>
+                                     </div>
+                                     <div className="rounded-2xl overflow-hidden shadow-md transform hover:scale-105 transition-all aspect-[9/16] border border-gray-200 dark:border-gray-700 relative group bg-gray-900">
+                                         <img src="images/tutorial/feedback.png" alt="Capturas de Comentarios" className="object-cover w-full h-full" />
+                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity duration-300">
+                                             <span className="text-white text-[10px] font-black uppercase text-center tracking-widest bg-black/40 px-3 py-2 rounded-full leading-none">Panel de<br/><span className="text-blue-400">Comentarios</span></span>
+                                         </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="bg-navy dark:bg-gray-800 rounded-3xl p-8 shadow-xl text-white relative overflow-hidden transition-colors duration-300">
                         <i className="fas fa-rocket absolute -right-6 -bottom-6 text-blue-900 dark:text-gray-900 opacity-30 text-8xl z-0 transform -rotate-12"></i>
                         <div className="relative z-10">
@@ -220,7 +302,9 @@
                             </div>
                         </div>
 
-                        <div className="mt-12 text-center bg-mint-light/30 dark:bg-gray-700/30 p-8 rounded-[2.5rem] border border-mint/20 dark:border-mint/10 animate-pulse-slow">
+
+
+                        <div className="mt-16 text-center bg-mint-light/30 dark:bg-gray-700/30 p-8 rounded-[2.5rem] border border-mint/20 dark:border-mint/10 animate-pulse-slow">
                             <p className="text-navy dark:text-white font-medium text-lg mb-2 italic">
                                 "La mejor inversión que puedes hacer es en ti mismo."
                             </p>
